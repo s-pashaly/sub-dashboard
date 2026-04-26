@@ -181,20 +181,14 @@
   }
   .logo-group { display: flex; align-items: center; gap: 35px; }
   .logo {
-    font-weight: 800;
-    font-size: 20px;
-    color: var(--text-ink);
-    letter-spacing: -0.02em;
     display: inline-flex;
     align-items: center;
-    gap: 6px;
+    line-height: 0;
   }
-  .logo-mark {
-    width: 28px; height: 28px;
-    border-radius: 8px;
-    background: linear-gradient(135deg, #016eef 0%, #4a9af5 100%);
-    display: inline-flex; align-items: center; justify-content: center;
-    color: #fff; font-size: 13px; font-weight: 800;
+  .logo img {
+    height: 28px;
+    width: auto;
+    display: block;
   }
   .nav-links { display: flex; gap: 27px; align-items: center; }
   .nav-link {
@@ -1026,9 +1020,8 @@
 <header class="header-nav">
   <div class="header-inner">
     <div class="logo-group">
-      <a href="#" class="logo">
-        <span class="logo-mark">H</span>
-        HtAG
+      <a href="#" class="logo" aria-label="HtAG home">
+        <img src="photo/Logo.svg" alt="HtAG" width="120" height="28">
       </a>
       <nav class="nav-links" aria-label="Primary">
         <a href="#" class="nav-link">
