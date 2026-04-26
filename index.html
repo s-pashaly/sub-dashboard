@@ -1,0 +1,1810 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HtAG — Lenah Valley, TAS 7008</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --blue-primary: #016eef;
+    --blue-hover: #0158c4;
+    --blue-pill-bg: #e8f1fd;
+    --blue-pill-border: rgba(1,110,239,0.22);
+    --blue-well-bg: #f4f8fe;
+    --blue-chip-border: #cee3ff;
+
+    --text-ink: #00131f;
+    --text-ink-2: #0a1220;
+    --text-body: #404654;
+    --text-body-2: #424a5c;
+    --text-muted: #7a8299;
+    --text-subtle: #8b94a8;
+    --text-header-nav: #252c32;
+
+    --bg-page: #f2f4f8;
+    --bg-card: #ffffff;
+
+    --border-container: #e2e2e2;
+    --border-light: #e2e6ee;
+    --border-dashed: #dadada;
+
+    --tier-critical-bg: #fee2e2;
+    --tier-critical-text: #b91c1c;
+    --tier-critical-well-bg: #fff4f4;
+    --tier-critical-well-bg-2: #fff5f5;
+    --tier-critical-container-border: #ffdada;
+    --tier-critical-tint-a: #fff4f4;
+    --tier-critical-tint-b: #fff5f5;
+
+    --tier-important-bg: #fef3c7;
+    --tier-important-text: #b45309;
+    --tier-important-well-bg: #fff9ef;
+    --tier-important-well-bg-2: #fff9f0;
+    --tier-important-container-border: #ffe0b3;
+    --tier-important-tint: #fff9ef;
+
+    --tier-stable-tint: #f1fef6;
+
+    --green-text: #16a34a;
+    --green-bg: #dcfce7;
+
+    --amber-pill-bg: #fef3c7;
+    --amber-pill-border: rgba(245,158,11,0.3);
+    --amber-pill-text: #f59e0b;
+
+    --subscore-bar-bg: #e2e6ee;
+    --subscore-bar-fill: #7db0ee;
+    --subscore-locked-value: #8b94a8;
+
+    --radius-container: 20px;
+    --radius-card: 15px;
+    --radius-tier-badge: 12px;
+    --radius-proprietary-badge: 8px;
+    --radius-pill: 999px;
+    --radius-button: 15px;
+    --radius-sub-score: 10px;
+
+    --shadow-header: 0 2px 20px rgba(0,0,0,0.05);
+    --shadow-card: 0 1px 2px rgba(0,0,0,0.04);
+    --shadow-tooltip: 0 6px 20px rgba(11,24,44,0.18), 0 2px 6px rgba(11,24,44,0.12);
+
+    --header-offset: 70px;
+
+    --font: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: var(--font);
+    background: var(--bg-page);
+    color: var(--text-body);
+    font-size: 13px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+  a { color: inherit; text-decoration: none; }
+  button { font-family: inherit; cursor: pointer; border: none; background: none; }
+
+  /* ============================================
+     TOOLTIP SYSTEM (data-tooltip attr)
+     ============================================ */
+  [data-tooltip] { position: relative; }
+  [data-tooltip]::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    bottom: calc(100% + 10px);
+    left: 50%;
+    transform: translateX(-50%) translateY(4px);
+    background: #0b182c;
+    color: #fff;
+    font-size: 11.5px;
+    font-weight: 500;
+    letter-spacing: -0.005em;
+    line-height: 1.45;
+    padding: 8px 11px;
+    border-radius: 8px;
+    width: max-content;
+    max-width: 240px;
+    white-space: normal;
+    text-align: center;
+    pointer-events: none;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.15s ease, transform 0.15s ease, visibility 0.15s;
+    z-index: 60;
+    box-shadow: var(--shadow-tooltip);
+  }
+  [data-tooltip]::before {
+    content: '';
+    position: absolute;
+    bottom: calc(100% + 4px);
+    left: 50%;
+    transform: translateX(-50%) translateY(4px);
+    border: 5px solid transparent;
+    border-top-color: #0b182c;
+    pointer-events: none;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.15s ease, transform 0.15s ease, visibility 0.15s;
+    z-index: 60;
+  }
+  [data-tooltip]:hover::after,
+  [data-tooltip]:hover::before,
+  [data-tooltip]:focus-visible::after,
+  [data-tooltip]:focus-visible::before {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(-50%) translateY(0);
+  }
+  /* Tooltip variant that anchors to the right edge (for items near viewport right) */
+  [data-tooltip][data-tooltip-align="right"]::after {
+    left: auto;
+    right: 0;
+    transform: translateX(0) translateY(4px);
+  }
+  [data-tooltip][data-tooltip-align="right"]::before {
+    left: auto;
+    right: 14px;
+    transform: translateX(0) translateY(4px);
+  }
+  [data-tooltip][data-tooltip-align="right"]:hover::after,
+  [data-tooltip][data-tooltip-align="right"]:focus-visible::after {
+    transform: translateX(0) translateY(0);
+  }
+  [data-tooltip][data-tooltip-align="right"]:hover::before,
+  [data-tooltip][data-tooltip-align="right"]:focus-visible::before {
+    transform: translateX(0) translateY(0);
+  }
+
+  /* ============================================
+     HEADER NAVIGATION (fixed at top)
+     ============================================ */
+  .header-nav {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    padding: 10px;
+    background: transparent;
+  }
+  .header-inner {
+    background: #fff;
+    border-radius: var(--radius-container);
+    box-shadow: var(--shadow-header);
+    padding: 10px 10px 10px 15px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .logo-group { display: flex; align-items: center; gap: 35px; }
+  .logo {
+    font-weight: 800;
+    font-size: 20px;
+    color: var(--text-ink);
+    letter-spacing: -0.02em;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .logo-mark {
+    width: 28px; height: 28px;
+    border-radius: 8px;
+    background: linear-gradient(135deg, #016eef 0%, #4a9af5 100%);
+    display: inline-flex; align-items: center; justify-content: center;
+    color: #fff; font-size: 13px; font-weight: 800;
+  }
+  .nav-links { display: flex; gap: 27px; align-items: center; }
+  .nav-link {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-header-nav);
+    letter-spacing: -0.01em;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 0;
+  }
+  .nav-link .chev { width: 8px; height: 4px; }
+  .user-actions { display: flex; align-items: center; gap: 5px; }
+  .user-action {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 8px 16px;
+    font-size: 14px; font-weight: 600;
+    color: var(--text-header-nav);
+    letter-spacing: -0.01em;
+  }
+  .user-action svg { width: 16px; height: 16px; }
+  .divider-vertical {
+    width: 1px; height: 24px; background: #e2e6ee; margin: 0 4px;
+  }
+  .user-action.login { color: var(--blue-primary); padding: 8px 16px; }
+  .join-btn {
+    background: var(--blue-primary);
+    color: #fff;
+    padding: 10px 16px;
+    border-radius: 10px;
+    font-weight: 600;
+    font-size: 14px;
+    letter-spacing: -0.01em;
+  }
+  .join-btn:hover { background: var(--blue-hover); }
+
+  /* ============================================
+     PAGE CONTAINER
+     ============================================ */
+  .page {
+    max-width: 1040px;
+    margin: 30px auto 0;
+    padding: 0 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  /* ============================================
+     BREADCRUMB
+     ============================================ */
+  .breadcrumb {
+    font-size: 12px;
+    color: var(--blue-primary);
+    letter-spacing: -0.005em;
+  }
+  .breadcrumb .sep { color: var(--text-muted); margin: 0 4px; }
+  .breadcrumb .current { color: var(--text-muted); }
+
+  /* ============================================
+     HERO (Overview + StreetLens preview)
+     ============================================ */
+  .hero {
+    display: grid;
+    grid-template-columns: 1fr 340px;
+    gap: 20px;
+    align-items: stretch;
+  }
+  .overview {
+    background: #fff;
+    border: 1px solid var(--border-container);
+    border-radius: var(--radius-container);
+    padding: 25px;
+    display: flex;
+    flex-direction: column;
+    gap: 80px;
+  }
+  .location-info { display: flex; flex-direction: column; gap: 18px; }
+  .location-details { display: flex; flex-direction: column; gap: 5px; }
+  .suburb-name {
+    font-size: 30px;
+    font-weight: 700;
+    color: var(--text-ink);
+    letter-spacing: -0.015em;
+  }
+  .council-meta { font-size: 13px; font-weight: 500; color: var(--text-muted); }
+
+  .property-tabs-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .property-tabs { display: flex; gap: 2px; }
+  .property-tab {
+    padding: 9px 17px;
+    border-radius: 15px;
+    border: 1px solid var(--border-light);
+    background: var(--bg-page);
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-body);
+  }
+  .property-tab.active {
+    background: var(--text-ink);
+    border-color: var(--text-ink);
+    color: #fff;
+  }
+  .confidence-badge {
+    background: var(--green-bg);
+    color: var(--green-text);
+    padding: 5px 10px;
+    border-radius: var(--radius-pill);
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    letter-spacing: 0.02em;
+  }
+  .confidence-badge svg { width: 11px; height: 11px; }
+
+  .key-metrics {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    align-items: start;
+  }
+  .key-metric {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    padding-left: 13px;
+    border-left: 1px solid var(--border-light);
+  }
+  .key-metric:first-child { padding-left: 0; border-left: 0; }
+  .metric-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+  }
+  .metric-value-wrap { display: flex; flex-direction: column; gap: 10px; }
+  .metric-value {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--text-ink);
+    line-height: 1;
+    display: inline-flex;
+    align-items: baseline;
+    gap: 3px;
+  }
+  .metric-value .suffix {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-muted);
+  }
+  .metric-change {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--green-text);
+  }
+  .metric-change svg { width: 8px; height: 8px; }
+  .metric-sub {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-muted);
+  }
+  .key-metric.rcs .metric-value { color: var(--blue-primary); }
+  .key-metric.rcs .metric-sub { color: var(--blue-primary); }
+
+  /* StreetLens preview (Google Maps embed) */
+  .streetlens {
+    background: #fff;
+    border: 1px solid var(--border-container);
+    border-radius: var(--radius-container);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+  .streetlens-map {
+    flex: 1;
+    min-height: 260px;
+    position: relative;
+    background: #eef2f7;
+  }
+  .streetlens-map iframe {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+    display: block;
+  }
+  .streetlens-label {
+    background: #fff;
+    padding: 10px 20px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    color: var(--text-muted);
+    border-top: 1px solid var(--border-light);
+  }
+  .streetlens-label svg { width: 12px; height: 12px; color: var(--blue-primary); }
+
+  /* ============================================
+     ANCHOR NAV (sticky under the header)
+     ============================================ */
+  .anchor-nav {
+    position: sticky;
+    top: var(--header-offset);
+    z-index: 40;
+    display: flex;
+    gap: 20px;
+    background: #F2F4F8;
+    padding: 5px 24px;
+    margin: 0 -24px;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .anchor-nav::-webkit-scrollbar { display: none; }
+  .anchor-link {
+    padding: 10px 0;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-muted);
+    white-space: nowrap;
+    transition: color 0.15s;
+  }
+  .anchor-link:hover { color: var(--text-ink); }
+  .anchor-link.active {
+    color: var(--blue-primary);
+    border-bottom: 1px solid var(--blue-primary);
+  }
+
+  /* ============================================
+     SECTION CONTAINER (base)
+     ============================================ */
+  .section {
+    border: 1px solid var(--border-container);
+    border-radius: var(--radius-container);
+    background: #fff;
+    display: flex;
+    flex-direction: column;
+    /* overflow is intentionally visible so tooltips can escape */
+  }
+  .section.tier-critical { border-color: var(--tier-critical-container-border); }
+  .section.tier-important { border-color: var(--tier-important-container-border); }
+
+  .section-body {
+    padding: 25px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    border-top-left-radius: var(--radius-container);
+    border-top-right-radius: var(--radius-container);
+  }
+  .section-body:last-child {
+    border-bottom-left-radius: var(--radius-container);
+    border-bottom-right-radius: var(--radius-container);
+  }
+  .section.tier-stable > .section-body {
+    background: linear-gradient(180deg, var(--tier-stable-tint) 0%, #fff 25%);
+  }
+  .section.tier-critical > .section-body {
+    background: linear-gradient(180deg, var(--tier-critical-tint-a) 0%, #fff 20%);
+  }
+  .section.tier-important > .section-body {
+    background: linear-gradient(180deg, var(--tier-important-tint) 0%, #fff 20%);
+  }
+
+  .section-header {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+  .section-title-row {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+  }
+  .section-title {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--text-ink);
+    letter-spacing: -0.015em;
+  }
+
+  /* Tier badge */
+  .tier-badge {
+    align-self: flex-start;
+    padding: 5px 10px;
+    border-radius: var(--radius-tier-badge);
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+  }
+  .tier-badge.critical { background: var(--tier-critical-bg); color: var(--tier-critical-text); }
+  .tier-badge.important { background: var(--tier-important-bg); color: var(--tier-important-text); }
+  .tier-badge.stable { background: var(--green-bg); color: var(--green-text); }
+
+  /* Proprietary badge */
+  .proprietary-badge {
+    background: var(--blue-pill-bg);
+    color: var(--blue-primary);
+    padding: 5px 10px;
+    border-radius: var(--radius-proprietary-badge);
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+  }
+
+  /* Explanation well (left border accent) */
+  .explanation {
+    border-left: 2px solid;
+    padding: 10px 15px;
+    border-top-right-radius: 10px;
+    border-bottom-right-radius: 10px;
+    font-size: 13px;
+    line-height: 1.4;
+    color: var(--text-body);
+  }
+  .explanation strong { font-weight: 600; color: var(--text-ink-2); }
+  .explanation .accent { font-weight: 600; }
+  .explanation.critical {
+    background: var(--tier-critical-well-bg);
+    border-left-color: var(--tier-critical-text);
+  }
+  .explanation.critical .accent { color: var(--tier-critical-text); }
+  .explanation.important {
+    background: var(--tier-important-well-bg);
+    border-left-color: var(--tier-important-text);
+  }
+  .explanation.important .accent { color: var(--tier-important-text); }
+  .explanation.blue {
+    background: var(--blue-well-bg);
+    border-left-color: var(--blue-primary);
+  }
+  .explanation.blue .accent { color: var(--blue-primary); }
+
+  /* Footer row (dashed top border) */
+  .section-footer {
+    background: #fff;
+    border-top: 1px dashed var(--border-dashed);
+    border-bottom-left-radius: var(--radius-container);
+    border-bottom-right-radius: var(--radius-container);
+    padding: 10px 10px 10px 25px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+    flex-wrap: wrap;
+  }
+  .footer-info {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-muted);
+  }
+  .footer-info svg { width: 12px; height: 12px; }
+  .footer-teasers {
+    display: inline-flex;
+    gap: 2px;
+    margin-left: 9px;
+  }
+  .footer-actions {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .plan-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--text-body);
+  }
+  .plan-pills {
+    display: inline-flex;
+    gap: 3px;
+  }
+  .plan-pill {
+    padding: 4px 11px;
+    border-radius: 20px;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    border: 1px solid;
+    cursor: help;
+  }
+  .plan-pill.investor {
+    background: var(--blue-pill-bg);
+    color: var(--blue-primary);
+    border-color: var(--blue-pill-border);
+  }
+  .plan-pill.pro {
+    background: var(--amber-pill-bg);
+    color: var(--amber-pill-text);
+    border-color: var(--amber-pill-border);
+  }
+
+  /* Unlock/CTA button */
+  .cta-primary {
+    background: var(--blue-primary);
+    color: #fff;
+    padding: 10px 20px;
+    border-radius: var(--radius-button);
+    font-size: 13px;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: background 0.15s;
+  }
+  .cta-primary:hover { background: var(--blue-hover); }
+  .cta-primary svg { width: 11px; height: 11px; }
+
+  .cta-secondary {
+    background: #fff;
+    border: 1px solid var(--border-dashed);
+    color: var(--text-ink);
+    padding: 11px 21px;
+    border-radius: var(--radius-button);
+    font-size: 13px;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .cta-secondary:hover { border-color: var(--text-ink); }
+  .cta-secondary svg { width: 14px; height: 14px; }
+
+  /* Risk teaser chips */
+  .risk-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2px;
+  }
+  .risk-chip {
+    background: #fff;
+    border: 1px solid var(--blue-chip-border);
+    padding: 6px 11px;
+    border-radius: var(--radius-pill);
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    color: var(--blue-primary);
+    letter-spacing: 0.03em;
+    white-space: nowrap;
+    line-height: 1;
+  }
+
+  /* ============================================
+     GOOD TO KNOW
+     ============================================ */
+  .good-to-know-body { font-size: 13.5px; color: var(--text-body); line-height: 1.5; }
+  .good-to-know-body p + p { margin-top: 10px; }
+  .good-to-know-body strong { font-weight: 600; color: var(--text-ink); }
+  .read-more {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--blue-primary);
+  }
+  .read-more svg { width: 10px; height: 10px; }
+
+  /* ============================================
+     RCS BREAKDOWN SUB-SCORES
+     ============================================ */
+  .sub-scores {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+  }
+  .sub-score {
+    background: #fff;
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-sub-score);
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    align-items: center;
+  }
+  .sub-score-lock {
+    align-self: flex-end;
+    color: var(--text-subtle);
+  }
+  .sub-score-lock svg { width: 10px; height: 10px; }
+  .sub-score-body { width: 100%; text-align: center; display: flex; flex-direction: column; gap: 12px; }
+  .sub-score-value {
+    font-size: 18px;
+    font-weight: 500;
+    color: var(--subscore-locked-value);
+    letter-spacing: 0.1em;
+  }
+  .sub-score-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+  }
+  .sub-score-bar {
+    background: var(--subscore-bar-bg);
+    height: 4px;
+    border-radius: var(--radius-pill);
+    width: 100%;
+    overflow: hidden;
+  }
+  .sub-score-bar-fill {
+    height: 100%;
+    background: var(--subscore-bar-fill);
+    border-radius: var(--radius-pill);
+    width: 10%;
+  }
+
+  /* ============================================
+     QUICK AREA STATS & RISK
+     ============================================ */
+  .stats-row {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+  .stat-item {
+    background: #fff;
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-card);
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .stat-icon {
+    width: 30px; height: 30px;
+    border-radius: 10px;
+    background: var(--blue-pill-bg);
+    display: inline-flex; align-items: center; justify-content: center;
+    color: var(--blue-primary);
+    flex-shrink: 0;
+  }
+  .stat-icon svg { width: 16px; height: 16px; }
+  .stat-content { display: flex; flex-direction: column; }
+  .stat-value {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text-ink);
+  }
+  .stat-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+  }
+
+  /* ============================================
+     MARKET TRENDS
+     ============================================ */
+  .section-subheader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+    flex-wrap: wrap;
+  }
+  .subsection-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+  }
+  .tabs-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+    flex-wrap: wrap;
+    margin-bottom: 15px;
+  }
+  .year-tabs { display: flex; gap: 2px; }
+  .perf-metric {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+  .perf-metric-title {
+    display: flex;
+    gap: 10px;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text-ink);
+  }
+  .chart-container {
+    background: #fff;
+    border: 0.5px solid var(--border-light);
+    border-radius: var(--radius-card);
+    height: 180px;
+    padding: 13px 40px 22px 44px;
+    position: relative;
+    overflow: hidden;
+  }
+  .chart-container svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+  .chart-axis {
+    position: absolute;
+    font-size: 10px;
+    font-weight: 500;
+    color: var(--text-muted);
+    letter-spacing: -0.005em;
+    pointer-events: none;
+  }
+  .chart-axis-y-top { top: 10px; left: 10px; }
+  .chart-axis-y-bottom { bottom: 24px; left: 10px; }
+  .chart-axis-x-left { bottom: 6px; left: 44px; }
+  .chart-axis-x-right { bottom: 6px; right: 10px; }
+  .divider-hr {
+    height: 1px;
+    background: var(--border-light);
+    margin: 5px 0;
+  }
+
+  /* Question card (Yield, Supply, Demand, Fundamentals, Education) */
+  .q-card {
+    background: #fff;
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-card);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+  .q-card-header {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+  }
+  .q-card-title {
+    flex: 1;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text-ink);
+    line-height: 1.3;
+  }
+  .q-card-info {
+    width: 18px; height: 18px;
+    border-radius: 50%;
+    background: var(--blue-pill-bg);
+    color: var(--blue-primary);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: background 0.15s, color 0.15s;
+  }
+  .q-card-info svg { width: 10px; height: 10px; }
+  .q-card-info:hover,
+  .q-card-info:focus-visible {
+    background: var(--blue-primary);
+    color: #fff;
+    outline: none;
+  }
+  .q-card-body {
+    display: flex;
+    gap: 40px;
+    align-items: stretch;
+    min-height: 108px;
+  }
+  .q-card-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    justify-content: space-between;
+  }
+  .q-card-text {
+    font-size: 13px;
+    line-height: 1.45;
+    color: var(--text-body-2);
+  }
+  .q-card-preview {
+    width: 180px;
+    flex-shrink: 0;
+    background: var(--blue-well-bg);
+    border: 0.5px solid var(--border-light);
+    border-radius: 6px;
+    overflow: hidden;
+    position: relative;
+  }
+  .q-card-preview img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  /* ============================================
+     SUPPLY/DEMAND + FUNDAMENTALS STACK
+     ============================================ */
+  .card-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  /* ============================================
+     BOTTOM CTA
+     ============================================ */
+  .bottom-cta-wrapper {
+    padding: 30px 0 50px;
+  }
+  .bottom-cta {
+    background: #0b182c;
+    border-radius: var(--radius-container);
+    overflow: hidden;
+    display: flex;
+    align-items: stretch;
+    position: relative;
+  }
+  .bottom-cta-content {
+    flex: 1;
+    padding: 30px;
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+  }
+  .bottom-cta-badge {
+    align-self: flex-start;
+    background: rgba(1,110,239,0.1);
+    border: 1px solid var(--blue-primary);
+    padding: 6px 11px;
+    border-radius: var(--radius-tier-badge);
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--blue-primary);
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+  }
+  .bottom-cta-headline {
+    color: #fff;
+    font-size: 30px;
+    font-weight: 700;
+    line-height: 1.25;
+    letter-spacing: -0.015em;
+  }
+  .bottom-cta-headline .accent { color: var(--blue-primary); }
+  .bottom-cta-body {
+    color: #fff;
+    font-size: 13px;
+    line-height: 1.55;
+    opacity: 0.92;
+    font-weight: 400;
+  }
+  .bottom-cta-actions {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    flex-wrap: wrap;
+    margin-top: 5px;
+  }
+  .bottom-cta-fine {
+    font-size: 11px;
+    font-weight: 500;
+    color: #7194ca;
+  }
+  .bottom-cta-image {
+    flex: 1;
+    min-width: 260px;
+    background: #0b182c;
+    position: relative;
+    overflow: hidden;
+  }
+  .bottom-cta-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    display: block;
+  }
+
+  /* ============================================
+     RESPONSIVE
+     ============================================ */
+  @media (max-width: 960px) {
+    .hero { grid-template-columns: 1fr; }
+    .streetlens-map { min-height: 180px; }
+    .anchor-nav { overflow-x: auto; padding-bottom: 10px; }
+    .key-metrics { grid-template-columns: repeat(2, 1fr); }
+    .key-metric { padding-left: 0; border-left: 0; padding-top: 16px; border-top: 1px solid var(--border-light); }
+    .key-metric:nth-child(1), .key-metric:nth-child(2) { padding-top: 0; border-top: 0; }
+    .nav-links { display: none; }
+    .user-action.search span, .user-action.mastermind span { display: none; }
+    .q-card-body { flex-direction: column; gap: 15px; }
+    .q-card-preview { width: 100%; height: 120px; }
+    .stats-row { grid-template-columns: 1fr; }
+    .sub-scores { grid-template-columns: 1fr; }
+    .bottom-cta { flex-direction: column; }
+    .bottom-cta-image { min-height: 220px; min-width: 0; }
+    .bottom-cta-headline { font-size: 24px; }
+    .section-footer { padding: 12px; align-items: flex-start; }
+    .footer-info { flex-wrap: wrap; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ============================================
+     HEADER NAVIGATION
+     ============================================ -->
+<header class="header-nav">
+  <div class="header-inner">
+    <div class="logo-group">
+      <a href="#" class="logo">
+        <span class="logo-mark">H</span>
+        HtAG
+      </a>
+      <nav class="nav-links" aria-label="Primary">
+        <a href="#" class="nav-link">
+          Services
+          <svg class="chev" viewBox="0 0 8 4" fill="none"><path d="M1 1l3 2 3-2" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
+        <a href="#" class="nav-link">
+          Workspace
+          <svg class="chev" viewBox="0 0 8 4" fill="none"><path d="M1 1l3 2 3-2" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
+        <a href="#" class="nav-link">
+          Support
+          <svg class="chev" viewBox="0 0 8 4" fill="none"><path d="M1 1l3 2 3-2" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
+      </nav>
+    </div>
+    <div class="user-actions">
+      <a href="#" class="user-action search">
+        <svg viewBox="0 0 16 16" fill="none"><circle cx="7" cy="7" r="5" stroke="currentColor" stroke-width="1.5"/><path d="M11 11l3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        <span>Search</span>
+      </a>
+      <span class="divider-vertical"></span>
+      <a href="#" class="user-action mastermind">
+        <svg viewBox="0 0 22 22" fill="none"><path d="M11 13a5 5 0 100-10 5 5 0 000 10zM3 20a8 8 0 0116 0" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        <span>Mastermind</span>
+      </a>
+      <span class="divider-vertical"></span>
+      <a href="#" class="user-action login">Login</a>
+      <a href="#" class="join-btn">Join Us</a>
+    </div>
+  </div>
+</header>
+
+<!-- ============================================
+     PAGE CONTENT
+     ============================================ -->
+<main class="page">
+
+  <!-- Breadcrumb -->
+  <nav class="breadcrumb" aria-label="Breadcrumb">
+    <a href="#">Home</a>
+    <span class="sep">›</span>
+    <a href="#">Top Real Estate Data</a>
+    <span class="sep">›</span>
+    <a href="#">Hobart City Council, TAS</a>
+    <span class="sep">›</span>
+    <span class="current">Lenah Valley, TAS 7008</span>
+  </nav>
+
+  <!-- HERO: Overview + StreetLens -->
+  <section class="hero">
+    <div class="overview">
+      <div class="location-info">
+        <div class="location-details">
+          <h1 class="suburb-name">Lenah Valley, TAS 7008</h1>
+          <p class="council-meta">Hobart City Council, Tasmania</p>
+        </div>
+        <div class="property-tabs-row">
+          <div class="property-tabs" role="tablist">
+            <button type="button" class="property-tab active" role="tab" aria-selected="true">Houses</button>
+            <button type="button" class="property-tab" role="tab" aria-selected="false">Units</button>
+          </div>
+          <span class="confidence-badge">
+            <svg viewBox="0 0 11 11" fill="none"><path d="M2 5.5l2.5 2.5L9 3.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            High Confidence
+          </span>
+        </div>
+      </div>
+
+      <div class="key-metrics">
+        <div class="key-metric">
+          <div class="metric-label">Buy</div>
+          <div class="metric-value-wrap">
+            <div class="metric-value">$551K</div>
+            <span class="metric-change">
+              <svg viewBox="0 0 8 8" fill="none"><path d="M4 1v6M1 4l3-3 3 3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              +2.1% YoY
+            </span>
+          </div>
+        </div>
+        <div class="key-metric">
+          <div class="metric-label">Rent</div>
+          <div class="metric-value-wrap">
+            <div class="metric-value">$630 <span class="suffix">pw</span></div>
+            <span class="metric-change">
+              <svg viewBox="0 0 8 8" fill="none"><path d="M4 1v6M1 4l3-3 3 3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              +4.5% YoY
+            </span>
+          </div>
+        </div>
+        <div class="key-metric">
+          <div class="metric-label">Yield</div>
+          <div class="metric-value-wrap">
+            <div class="metric-value">3.84 <span class="suffix">%</span></div>
+            <span class="metric-sub">Gross, houses</span>
+          </div>
+        </div>
+        <div class="key-metric rcs">
+          <div class="metric-label">Overall RCS™</div>
+          <div class="metric-value-wrap">
+            <div class="metric-value">79</div>
+            <span class="metric-sub">HtAG score</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <aside class="streetlens" aria-label="StreetLens preview">
+      <div class="streetlens-map">
+        <iframe
+          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d23393.22023721617!2d147.22795873972152!3d-42.869624639113276!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0xaa6e7445d8af2783%3A0x503c94dd0de15b0!2sLenah%20Valley%20TAS%207008!5e0!3m2!1sen!2sau!4v1777177684513!5m2!1sen!2sau"
+          title="Map of Lenah Valley TAS 7008"
+          loading="lazy"
+          allowfullscreen
+          referrerpolicy="no-referrer-when-downgrade"></iframe>
+      </div>
+      <div class="streetlens-label">
+        <svg viewBox="0 0 12 12" fill="none"><path d="M6 1a4 4 0 014 4c0 3-4 6-4 6s-4-3-4-6a4 4 0 014-4z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/><circle cx="6" cy="5" r="1.25" fill="currentColor"/></svg>
+        Local insights, nearby listings, points of interest
+      </div>
+    </aside>
+  </section>
+
+  <!-- ANCHOR NAV -->
+  <nav class="anchor-nav" aria-label="Section navigation">
+    <a href="#good-to-know" class="anchor-link active">Good to Know</a>
+    <a href="#rcs" class="anchor-link">RCS Breakdown</a>
+    <a href="#quick-stats" class="anchor-link">Quick Area Stats &amp; Risk</a>
+    <a href="#market-trends" class="anchor-link">Market Trends</a>
+    <a href="#supply-demand" class="anchor-link">Supply &amp; Demand</a>
+    <a href="#fundamentals" class="anchor-link">Fundamentals</a>
+    <a href="#education" class="anchor-link">Education &amp; Infrastructure</a>
+  </nav>
+
+  <!-- ============================================
+       GOOD TO KNOW
+       ============================================ -->
+  <section id="good-to-know" class="section tier-stable">
+    <div class="section-body">
+      <h2 class="section-title">Good to Know</h2>
+      <div class="good-to-know-body">
+        <p><strong>Lenah Valley, TAS 7008</strong> is a tightly-held inner-Hobart house market within the Hobart City Council area, currently positioned as a <strong>long-hold capital growth submarket</strong> in Tasmania's most established residential corridor. Sitting 6&nbsp;km northwest of the Hobart CBD, the suburb is characterised by leafy streets, a blend of heritage and contemporary housing, and an established owner-occupier base.</p>
+        <p>The suburb is home to roughly <strong>6,533 residents</strong> across <strong>3,073 dwellings</strong>, with vacancy at just <strong>0.59%</strong> — one of the tightest rental markets in greater Hobart.</p>
+      </div>
+      <a href="#" class="read-more">
+        Read more
+        <svg viewBox="0 0 10 10" fill="none"><path d="M3 2l4 3-4 3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
+    </div>
+    <div class="section-footer">
+      <a href="#" class="cta-secondary">
+        Generate PDF
+        <svg viewBox="0 0 14 14" fill="none"><path d="M7 2v8M4 7l3 3 3-3M2 12h10" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
+    </div>
+  </section>
+
+  <!-- ============================================
+       RCS BREAKDOWN
+       ============================================ -->
+  <section id="rcs" class="section tier-critical">
+    <div class="section-body">
+      <div class="section-header">
+        <span class="tier-badge critical">Critical to know</span>
+        <div class="section-title-row">
+          <h2 class="section-title">RCS Breakdown</h2>
+          <span class="proprietary-badge">HtAG Proprietary</span>
+        </div>
+      </div>
+      <p class="explanation critical">
+        Lenah Valley scores an <strong>RCS™ of 79</strong> — a strong overall signal, but the headline doesn't tell you <strong>why</strong>. The three sub-scores below reveal whether that 79 is earned through <strong>risk minimisation</strong>, <strong>capital growth</strong>, or <strong>cashflow</strong> — and which portfolio brief it fits. <span class="accent">Unlock the breakdown.</span>
+      </p>
+      <div class="sub-scores">
+        <div class="sub-score">
+          <span class="sub-score-lock" aria-label="Locked">
+            <svg viewBox="0 0 10 10" fill="none"><rect x="2" y="4.5" width="6" height="4.5" rx="1" stroke="currentColor" stroke-width="1.2"/><path d="M3.5 4.5V3a1.5 1.5 0 013 0v1.5" stroke="currentColor" stroke-width="1.2"/></svg>
+          </span>
+          <div class="sub-score-body">
+            <div class="sub-score-value">– –</div>
+            <div class="sub-score-label">Lower Risk RCS™</div>
+            <div class="sub-score-bar"><span class="sub-score-bar-fill"></span></div>
+          </div>
+        </div>
+        <div class="sub-score">
+          <span class="sub-score-lock" aria-label="Locked">
+            <svg viewBox="0 0 10 10" fill="none"><rect x="2" y="4.5" width="6" height="4.5" rx="1" stroke="currentColor" stroke-width="1.2"/><path d="M3.5 4.5V3a1.5 1.5 0 013 0v1.5" stroke="currentColor" stroke-width="1.2"/></svg>
+          </span>
+          <div class="sub-score-body">
+            <div class="sub-score-value">– –</div>
+            <div class="sub-score-label">Capital Growth RCS™</div>
+            <div class="sub-score-bar"><span class="sub-score-bar-fill"></span></div>
+          </div>
+        </div>
+        <div class="sub-score">
+          <span class="sub-score-lock" aria-label="Locked">
+            <svg viewBox="0 0 10 10" fill="none"><rect x="2" y="4.5" width="6" height="4.5" rx="1" stroke="currentColor" stroke-width="1.2"/><path d="M3.5 4.5V3a1.5 1.5 0 013 0v1.5" stroke="currentColor" stroke-width="1.2"/></svg>
+          </span>
+          <div class="sub-score-body">
+            <div class="sub-score-value">– –</div>
+            <div class="sub-score-label">Cashflow RCS™</div>
+            <div class="sub-score-bar"><span class="sub-score-bar-fill"></span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="section-footer">
+      <span class="footer-info">
+        <svg viewBox="0 0 12 12" fill="none"><rect x="3" y="5.5" width="6" height="5" rx="1" stroke="currentColor" stroke-width="1.2"/><path d="M4.5 5.5V4a1.5 1.5 0 013 0v1.5" stroke="currentColor" stroke-width="1.2"/></svg>
+        Unlock the 3 RCS dimensions
+      </span>
+      <div class="footer-actions">
+        <span class="plan-label">
+          Included in
+          <span class="plan-pills">
+            <span class="plan-pill investor" tabindex="0"
+                  data-tooltip="Investor — full suburb intelligence: RCS™ breakdown, 10-year trends, all 8 supply &amp; demand metrics, fundamentals, and the infrastructure layer."
+                  data-tooltip-align="right">Investor</span>
+            <span class="plan-pill pro" tabindex="0"
+                  data-tooltip="Pro — everything in Investor plus the Dex ranking engine and portfolio comparison tools used by buyers agents."
+                  data-tooltip-align="right">Pro</span>
+          </span>
+        </span>
+        <a href="#" class="cta-primary"
+           data-tooltip="Unlock the full Lenah Valley intelligence — every metric, chart, and the 10-year trajectory. Quarterly &amp; yearly plans, cancel anytime."
+           data-tooltip-align="right">
+          Get full access
+          <svg viewBox="0 0 11 11" fill="none"><path d="M2 5.5h7M6 2.5l3 3-3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================
+       QUICK AREA STATS & RISK
+       ============================================ -->
+  <section id="quick-stats" class="section tier-stable">
+    <div class="section-body">
+      <h2 class="section-title">Quick Area Stats &amp; Risk</h2>
+      <div class="stats-row">
+        <div class="stat-item">
+          <span class="stat-icon">
+            <svg viewBox="0 0 16 16" fill="none"><path d="M2 8l6-5 6 5v6H2V8z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/><path d="M6 14v-4h4v4" stroke="currentColor" stroke-width="1.4"/></svg>
+          </span>
+          <div class="stat-content">
+            <span class="stat-value">3,073</span>
+            <span class="stat-label">Dwellings</span>
+          </div>
+        </div>
+        <div class="stat-item">
+          <span class="stat-icon">
+            <svg viewBox="0 0 16 16" fill="none"><circle cx="5.5" cy="5" r="2.2" stroke="currentColor" stroke-width="1.4"/><circle cx="11" cy="6" r="1.8" stroke="currentColor" stroke-width="1.4"/><path d="M1.5 13c.5-2.2 2.2-3.2 4-3.2s3.5 1 4 3.2M9 13c.4-1.6 1.6-2.4 3-2.4s2.6.8 3 2.4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+          </span>
+          <div class="stat-content">
+            <span class="stat-value">6,533</span>
+            <span class="stat-label">Population</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="section-footer">
+      <span class="footer-info">
+        <svg viewBox="0 0 12 12" fill="none"><rect x="3" y="5.5" width="6" height="5" rx="1" stroke="currentColor" stroke-width="1.2"/><path d="M4.5 5.5V4a1.5 1.5 0 013 0v1.5" stroke="currentColor" stroke-width="1.2"/></svg>
+        3 more risk signals locked for Lenah Valley
+        <span class="footer-teasers">
+          <span class="risk-chip">EDI Risk</span>
+          <span class="risk-chip">Bushfire</span>
+          <span class="risk-chip">Flood</span>
+        </span>
+      </span>
+      <div class="footer-actions">
+        <span class="plan-label">
+          Included in
+          <span class="plan-pills">
+            <span class="plan-pill investor" tabindex="0"
+                  data-tooltip="Investor — full suburb intelligence: RCS™ breakdown, 10-year trends, all 8 supply &amp; demand metrics, fundamentals, and the infrastructure layer."
+                  data-tooltip-align="right">Investor</span>
+            <span class="plan-pill pro" tabindex="0"
+                  data-tooltip="Pro — everything in Investor plus the Dex ranking engine and portfolio comparison tools used by buyers agents."
+                  data-tooltip-align="right">Pro</span>
+          </span>
+        </span>
+        <a href="#" class="cta-primary"
+           data-tooltip="Unlock the full Lenah Valley intelligence — every metric, chart, and the 10-year trajectory. Quarterly &amp; yearly plans, cancel anytime."
+           data-tooltip-align="right">
+          Get full access
+          <svg viewBox="0 0 11 11" fill="none"><path d="M2 5.5h7M6 2.5l3 3-3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================
+       MARKET TRENDS
+       ============================================ -->
+  <section id="market-trends" class="section tier-critical">
+    <div class="section-body" style="gap: 30px;">
+      <div class="section-header">
+        <span class="tier-badge critical">Critical to know</span>
+        <h2 class="section-title">Market Trends</h2>
+      </div>
+      <p class="explanation critical">
+        Lenah Valley's <strong>$551K and 3.84% yield</strong> are <strong>today's snapshot</strong>. The <strong>10-year trajectory</strong> below turns it into context — showing whether you're entering at the start of a leg up, mid-cycle, or near a peak. <strong>Note:</strong> historical trends only, not forecasts. <span class="accent">Unlock the trends.</span>
+      </p>
+      <div class="divider-hr"></div>
+
+      <!-- Historical Performance -->
+      <div style="display:flex; flex-direction:column; gap:20px;">
+        <div>
+          <div class="subsection-label" style="margin-bottom: 15px;">Historical Performance</div>
+          <div class="tabs-row">
+            <div class="property-tabs">
+              <button type="button" class="property-tab active">Houses</button>
+              <button type="button" class="property-tab">Units</button>
+            </div>
+            <div class="year-tabs">
+              <button type="button" class="property-tab">1Y</button>
+              <button type="button" class="property-tab">3Y</button>
+              <button type="button" class="property-tab">5Y</button>
+              <button type="button" class="property-tab active">10Y</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Typical Price -->
+        <div class="perf-metric">
+          <div class="perf-metric-title">
+            <span>Typical Price</span>
+            <span>$551K</span>
+          </div>
+          <p class="explanation blue">
+            <strong>$551K</strong> is today. <strong>The 10-year trajectory</strong> reveals whether that's the top of a run, the start of a new leg, or somewhere mid-cycle. <span class="accent">Unlock the trend line.</span>
+          </p>
+          <div class="chart-container">
+            <svg viewBox="0 0 600 160" preserveAspectRatio="none" aria-hidden="true">
+              <defs>
+                <linearGradient id="priceGrad" x1="0" x2="0" y1="0" y2="1">
+                  <stop offset="0%" stop-color="#016eef" stop-opacity="0.25"/>
+                  <stop offset="100%" stop-color="#016eef" stop-opacity="0"/>
+                </linearGradient>
+              </defs>
+              <g class="chart-gridlines" stroke="#eef2f7" stroke-width="1">
+                <line x1="0" x2="600" y1="40" y2="40"/>
+                <line x1="0" x2="600" y1="80" y2="80"/>
+                <line x1="0" x2="600" y1="120" y2="120"/>
+              </g>
+              <path d="M0,145 C60,140 100,130 160,115 S260,85 320,75 420,55 500,35 570,20 600,15 L600,160 L0,160 Z" fill="url(#priceGrad)"/>
+              <path d="M0,145 C60,140 100,130 160,115 S260,85 320,75 420,55 500,35 570,20 600,15" stroke="#016eef" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+              <circle cx="600" cy="15" r="4" fill="#016eef"/>
+              <circle cx="600" cy="15" r="7" fill="#016eef" fill-opacity="0.18"/>
+            </svg>
+            <span class="chart-axis chart-axis-y-top">$551K</span>
+            <span class="chart-axis chart-axis-y-bottom">$305K</span>
+            <span class="chart-axis chart-axis-x-left">2015</span>
+            <span class="chart-axis chart-axis-x-right">2025</span>
+          </div>
+        </div>
+
+        <!-- Median Rent -->
+        <div class="perf-metric">
+          <div class="perf-metric-title">
+            <span>Median Rent</span>
+            <span>$630</span>
+          </div>
+          <p class="explanation blue">
+            <strong>$630pw</strong> today, with rent growth (+4.5% YoY) outpacing price growth (+2.1%). <strong>That spread determines whether yield is expanding or compressing</strong> across the next cycle. <span class="accent">Unlock the trend line.</span>
+          </p>
+          <div class="chart-container">
+            <svg viewBox="0 0 600 160" preserveAspectRatio="none" aria-hidden="true">
+              <defs>
+                <linearGradient id="rentGrad" x1="0" x2="0" y1="0" y2="1">
+                  <stop offset="0%" stop-color="#16a34a" stop-opacity="0.22"/>
+                  <stop offset="100%" stop-color="#16a34a" stop-opacity="0"/>
+                </linearGradient>
+              </defs>
+              <g class="chart-gridlines" stroke="#eef2f7" stroke-width="1">
+                <line x1="0" x2="600" y1="40" y2="40"/>
+                <line x1="0" x2="600" y1="80" y2="80"/>
+                <line x1="0" x2="600" y1="120" y2="120"/>
+              </g>
+              <path d="M0,135 C70,132 130,120 200,108 S340,85 420,68 520,48 600,28 L600,160 L0,160 Z" fill="url(#rentGrad)"/>
+              <path d="M0,135 C70,132 130,120 200,108 S340,85 420,68 520,48 600,28" stroke="#16a34a" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+              <circle cx="600" cy="28" r="4" fill="#16a34a"/>
+              <circle cx="600" cy="28" r="7" fill="#16a34a" fill-opacity="0.18"/>
+            </svg>
+            <span class="chart-axis chart-axis-y-top">$630</span>
+            <span class="chart-axis chart-axis-y-bottom">$410</span>
+            <span class="chart-axis chart-axis-x-left">2015</span>
+            <span class="chart-axis chart-axis-x-right">2025</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Yield Trends / Cycle question card -->
+      <div class="q-card">
+        <div class="q-card-header">
+          <h3 class="q-card-title">Where is Lenah Valley in its cycle — and is the 3.84% yield holding?</h3>
+          <button type="button" class="q-card-info" aria-label="About this insight"
+                  data-tooltip="Locked preview — unlock to see cycle phase, position, yield trajectory, and the rent-vs-price spread over 10 years."
+                  data-tooltip-align="right">
+            <svg viewBox="0 0 12 12" fill="none"><path d="M6 10.5v-3.5M6 4.25a.5.5 0 100-.01" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><circle cx="6" cy="6" r="5" stroke="currentColor" stroke-width="1.2"/></svg>
+          </button>
+        </div>
+        <div class="q-card-body">
+          <div class="q-card-content">
+            <p class="q-card-text">Cycle phase tells you whether you're buying near the bottom (room to run) or top (compression ahead). Yield trajectory tells you whether cashflow is durable or being eroded — the single most important question for a long-hold thesis.</p>
+            <div class="risk-chips">
+              <span class="risk-chip">Cycle Phase</span>
+              <span class="risk-chip">Cycle Position</span>
+              <span class="risk-chip">Yield Trajectory</span>
+              <span class="risk-chip">Rent vs Price Spread</span>
+            </div>
+          </div>
+          <div class="q-card-preview">
+            <img src="photo/Market Trends 1.png" alt="Market trends cycle preview" loading="lazy">
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="section-footer">
+      <span class="footer-info">
+        <svg viewBox="0 0 12 12" fill="none"><rect x="3" y="5.5" width="6" height="5" rx="1" stroke="currentColor" stroke-width="1.2"/><path d="M4.5 5.5V4a1.5 1.5 0 013 0v1.5" stroke="currentColor" stroke-width="1.2"/></svg>
+        Unlock 10-year trends + cycle &amp; yield outlook
+      </span>
+      <div class="footer-actions">
+        <span class="plan-label">
+          Included in
+          <span class="plan-pills">
+            <span class="plan-pill investor" tabindex="0"
+                  data-tooltip="Investor — full suburb intelligence: RCS™ breakdown, 10-year trends, all 8 supply &amp; demand metrics, fundamentals, and the infrastructure layer."
+                  data-tooltip-align="right">Investor</span>
+            <span class="plan-pill pro" tabindex="0"
+                  data-tooltip="Pro — everything in Investor plus the Dex ranking engine and portfolio comparison tools used by buyers agents."
+                  data-tooltip-align="right">Pro</span>
+          </span>
+        </span>
+        <a href="#" class="cta-primary"
+           data-tooltip="Unlock the full Lenah Valley intelligence — every metric, chart, and the 10-year trajectory. Quarterly &amp; yearly plans, cancel anytime."
+           data-tooltip-align="right">
+          Get full access
+          <svg viewBox="0 0 11 11" fill="none"><path d="M2 5.5h7M6 2.5l3 3-3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================
+       SUPPLY & DEMAND
+       ============================================ -->
+  <section id="supply-demand" class="section tier-important">
+    <div class="section-body" style="gap: 30px;">
+      <div class="section-header">
+        <span class="tier-badge important">Important to know</span>
+        <h2 class="section-title">Supply &amp; Demand</h2>
+      </div>
+      <p class="explanation important">
+        Lenah Valley's headline numbers — SoM 0.36%, Inventory 1.45 months, Vacancy 0.59% — show <strong>where</strong> the market is today. The two cards below answer <strong>where it's heading</strong>. Direction is what separates a buy from a wait. <span class="accent">Unlock to see.</span>
+      </p>
+      <div class="card-stack">
+        <!-- Supply -->
+        <div class="q-card">
+          <div class="q-card-header">
+            <h3 class="q-card-title">Is housing supply tightening or building up?</h3>
+            <button type="button" class="q-card-info" aria-label="About this insight"
+                    data-tooltip="Locked preview — unlock Stock on Market, Inventory, Building Approvals and Hold Period trend lines to see direction of supply pressure."
+                    data-tooltip-align="right">
+              <svg viewBox="0 0 12 12" fill="none"><path d="M6 10.5v-3.5M6 4.25a.5.5 0 100-.01" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><circle cx="6" cy="6" r="5" stroke="currentColor" stroke-width="1.2"/></svg>
+            </button>
+          </div>
+          <div class="q-card-body">
+            <div class="q-card-content">
+              <p class="q-card-text">With Stock on Market already at 0.36%, the trend is what matters. SoM, inventory, building approvals and hold period together reveal whether the market is starving for stock (price pressure up) or quietly building a pipeline (pressure down).</p>
+              <div class="risk-chips">
+                <span class="risk-chip">Stock on Market</span>
+                <span class="risk-chip">Inventory</span>
+                <span class="risk-chip">Building Approvals</span>
+                <span class="risk-chip">Hold Period</span>
+              </div>
+            </div>
+            <div class="q-card-preview">
+              <img src="photo/Supply &amp; Demand 1.png" alt="Supply trend preview" loading="lazy">
+            </div>
+          </div>
+        </div>
+        <!-- Demand -->
+        <div class="q-card">
+          <div class="q-card-header">
+            <h3 class="q-card-title">Is buyer and renter demand heating up or cooling off?</h3>
+            <button type="button" class="q-card-info" aria-label="About this insight"
+                    data-tooltip="Locked preview — unlock Days on Market, Vacancy, Search Index and Clearance Rate trends to read the demand pulse."
+                    data-tooltip-align="right">
+              <svg viewBox="0 0 12 12" fill="none"><path d="M6 10.5v-3.5M6 4.25a.5.5 0 100-.01" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><circle cx="6" cy="6" r="5" stroke="currentColor" stroke-width="1.2"/></svg>
+            </button>
+          </div>
+          <div class="q-card-body">
+            <div class="q-card-content">
+              <p class="q-card-text">With vacancy at 0.59%, the question is whether demand is still building or quietly peaking. Days on market, vacancy, search index and clearance rate are the four pulse-points — when they diverge, they signal a turning point.</p>
+              <div class="risk-chips">
+                <span class="risk-chip">Days on Market</span>
+                <span class="risk-chip">Vacancy Rate</span>
+                <span class="risk-chip">Search Index</span>
+                <span class="risk-chip">Clearance Rate</span>
+              </div>
+            </div>
+            <div class="q-card-preview">
+              <img src="photo/Supply &amp; Demand 2.png" alt="Demand trend preview" loading="lazy">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="section-footer">
+      <span class="footer-info">
+        <svg viewBox="0 0 12 12" fill="none"><rect x="3" y="5.5" width="6" height="5" rx="1" stroke="currentColor" stroke-width="1.2"/><path d="M4.5 5.5V4a1.5 1.5 0 013 0v1.5" stroke="currentColor" stroke-width="1.2"/></svg>
+        Unlock 8 supply &amp; demand metrics with full trends
+      </span>
+      <div class="footer-actions">
+        <span class="plan-label">
+          Included in
+          <span class="plan-pills">
+            <span class="plan-pill investor" tabindex="0"
+                  data-tooltip="Investor — full suburb intelligence: RCS™ breakdown, 10-year trends, all 8 supply &amp; demand metrics, fundamentals, and the infrastructure layer."
+                  data-tooltip-align="right">Investor</span>
+            <span class="plan-pill pro" tabindex="0"
+                  data-tooltip="Pro — everything in Investor plus the Dex ranking engine and portfolio comparison tools used by buyers agents."
+                  data-tooltip-align="right">Pro</span>
+          </span>
+        </span>
+        <a href="#" class="cta-primary"
+           data-tooltip="Unlock the full Lenah Valley intelligence — every metric, chart, and the 10-year trajectory. Quarterly &amp; yearly plans, cancel anytime."
+           data-tooltip-align="right">
+          Get full access
+          <svg viewBox="0 0 11 11" fill="none"><path d="M2 5.5h7M6 2.5l3 3-3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================
+       FUNDAMENTALS
+       ============================================ -->
+  <section id="fundamentals" class="section tier-critical">
+    <div class="section-body" style="gap: 30px;">
+      <div class="section-header">
+        <span class="tier-badge critical">Critical to know</span>
+        <h2 class="section-title">Fundamentals</h2>
+      </div>
+      <p class="explanation critical">
+        Lenah Valley looks tightly-held and stable on the surface — but the <strong>three layers below</strong> separate suburbs that genuinely hold value from ones that only look like they do.<br>
+        <span class="accent">Unlock to decide.</span>
+      </p>
+      <div class="card-stack">
+        <!-- Socio-economics -->
+        <div class="q-card">
+          <div class="q-card-header">
+            <h3 class="q-card-title">Is Lenah Valley genuinely stable — or just expensive?</h3>
+            <button type="button" class="q-card-info" aria-label="About this insight"
+                    data-tooltip="Locked preview — unlock IRSAD, renter-to-owner split, and units-to-houses ratio to separate tightly-held from hidden-volatility submarkets."
+                    data-tooltip-align="right">
+              <svg viewBox="0 0 12 12" fill="none"><path d="M6 10.5v-3.5M6 4.25a.5.5 0 100-.01" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><circle cx="6" cy="6" r="5" stroke="currentColor" stroke-width="1.2"/></svg>
+            </button>
+          </div>
+          <div class="q-card-body">
+            <div class="q-card-content">
+              <p class="q-card-text">IRSAD 1047 hints at affluence, but socio-economic strength alone doesn't guarantee resilience. Combined with the renter-to-owner balance and unit-to-house ratio, you get the three signals that separate a tightly-held submarket from one carrying hidden volatility.</p>
+              <div class="risk-chips">
+                <span class="risk-chip">IRSAD</span>
+                <span class="risk-chip">Renter to Owner</span>
+                <span class="risk-chip">Units to Houses</span>
+              </div>
+            </div>
+            <div class="q-card-preview">
+              <img src="photo/Fundamentals 01.png" alt="Fundamentals: socio-economics preview" loading="lazy">
+            </div>
+          </div>
+        </div>
+        <!-- Projections -->
+        <div class="q-card">
+          <div class="q-card-header">
+            <h3 class="q-card-title">Where do Lenah Valley prices go over the next 12 months?</h3>
+            <button type="button" class="q-card-info" aria-label="About this insight"
+                    data-tooltip="Locked preview — unlock the 24-month projected ROI and volatility index to time entry or rotate into a steadier submarket."
+                    data-tooltip-align="right">
+              <svg viewBox="0 0 12 12" fill="none"><path d="M6 10.5v-3.5M6 4.25a.5.5 0 100-.01" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><circle cx="6" cy="6" r="5" stroke="currentColor" stroke-width="1.2"/></svg>
+            </button>
+          </div>
+          <div class="q-card-body">
+            <div class="q-card-content">
+              <p class="q-card-text">Today's $551K is a snapshot. Projected ROI and the volatility index tell you whether to commit capital now, wait for a softer entry, or rotate into a steadier Hobart submarket.</p>
+              <div class="risk-chips">
+                <span class="risk-chip">Projected Annual ROI</span>
+                <span class="risk-chip">Volatility Index</span>
+              </div>
+            </div>
+            <div class="q-card-preview">
+              <img src="photo/Fundamentals 02.png" alt="Fundamentals: projections preview" loading="lazy">
+            </div>
+          </div>
+        </div>
+        <!-- Liquidity -->
+        <div class="q-card">
+          <div class="q-card-header">
+            <h3 class="q-card-title">Can you actually buy into Lenah Valley — and exit cleanly?</h3>
+            <button type="button" class="q-card-info" aria-label="About this insight"
+                    data-tooltip="Locked preview — unlock annual sales &amp; rental volume plus search and clearance rates to gauge liquidity and exit options."
+                    data-tooltip-align="right">
+              <svg viewBox="0 0 12 12" fill="none"><path d="M6 10.5v-3.5M6 4.25a.5.5 0 100-.01" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><circle cx="6" cy="6" r="5" stroke="currentColor" stroke-width="1.2"/></svg>
+            </button>
+          </div>
+          <div class="q-card-body">
+            <div class="q-card-content">
+              <p class="q-card-text">Tightly-held suburbs reward long-hold investors but punish anyone who needs liquidity. Annual sales and rental volume reveal whether your capital can reposition — or sits structurally locked in.</p>
+              <div class="risk-chips">
+                <span class="risk-chip">Annual Sales Volume</span>
+                <span class="risk-chip">Annual Rental Volume</span>
+                <span class="risk-chip">Search Index</span>
+                <span class="risk-chip">Clearance Rate</span>
+              </div>
+            </div>
+            <div class="q-card-preview">
+              <img src="photo/Fundamentals 03.png" alt="Fundamentals: liquidity preview" loading="lazy">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="section-footer">
+      <span class="footer-info">
+        <svg viewBox="0 0 12 12" fill="none"><rect x="3" y="5.5" width="6" height="5" rx="1" stroke="currentColor" stroke-width="1.2"/><path d="M4.5 5.5V4a1.5 1.5 0 013 0v1.5" stroke="currentColor" stroke-width="1.2"/></svg>
+        Unlock all 7 fundamentals
+      </span>
+      <div class="footer-actions">
+        <span class="plan-label">
+          Included in
+          <span class="plan-pills">
+            <span class="plan-pill investor" tabindex="0"
+                  data-tooltip="Investor — full suburb intelligence: RCS™ breakdown, 10-year trends, all 8 supply &amp; demand metrics, fundamentals, and the infrastructure layer."
+                  data-tooltip-align="right">Investor</span>
+            <span class="plan-pill pro" tabindex="0"
+                  data-tooltip="Pro — everything in Investor plus the Dex ranking engine and portfolio comparison tools used by buyers agents."
+                  data-tooltip-align="right">Pro</span>
+          </span>
+        </span>
+        <a href="#" class="cta-primary"
+           data-tooltip="Unlock the full Lenah Valley intelligence — every metric, chart, and the 10-year trajectory. Quarterly &amp; yearly plans, cancel anytime."
+           data-tooltip-align="right">
+          Get full access
+          <svg viewBox="0 0 11 11" fill="none"><path d="M2 5.5h7M6 2.5l3 3-3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================
+       EDUCATION & INFRASTRUCTURE
+       ============================================ -->
+  <section id="education" class="section tier-important">
+    <div class="section-body" style="gap: 30px;">
+      <div class="section-header">
+        <span class="tier-badge important">Important to know</span>
+        <h2 class="section-title">Education &amp; Infrastructure</h2>
+      </div>
+      <p class="explanation important">
+        Property data alone doesn't explain why some Hobart suburbs hold value across decades. The <strong>amenity layer</strong> — schools, transport, hospitals, employment — is the most consistent leading indicator of long-hold capital growth. <span class="accent">Unlock to see.</span>
+      </p>
+      <div class="q-card">
+        <div class="q-card-header">
+          <h3 class="q-card-title">Does Lenah Valley's school catchment + infrastructure pipeline justify the price?</h3>
+          <button type="button" class="q-card-info" aria-label="About this insight"
+                  data-tooltip="Locked preview — unlock school ranks, catchment quality, infrastructure spend, transport projects, and hospital/employment amenity."
+                  data-tooltip-align="right">
+            <svg viewBox="0 0 12 12" fill="none"><path d="M6 10.5v-3.5M6 4.25a.5.5 0 100-.01" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><circle cx="6" cy="6" r="5" stroke="currentColor" stroke-width="1.2"/></svg>
+          </button>
+        </div>
+        <div class="q-card-body">
+          <div class="q-card-content">
+            <p class="q-card-text">School ranks anchor family demand and tenant quality. The active infrastructure pipeline shifts a suburb's price ceiling over the next 5–10 years. Together they tell you whether Lenah Valley has structural support for the next leg of capital growth.</p>
+            <div class="risk-chips">
+              <span class="risk-chip">School Rank</span>
+              <span class="risk-chip">Catchment Quality</span>
+              <span class="risk-chip">Infrastructure Spend</span>
+              <span class="risk-chip">Transport Projects</span>
+              <span class="risk-chip">Hospitals &amp; Employment</span>
+            </div>
+          </div>
+          <div class="q-card-preview">
+            <img src="photo/Education &amp; Infrastructure 1.png" alt="Education and infrastructure preview" loading="lazy">
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="section-footer">
+      <span class="footer-info">
+        <svg viewBox="0 0 12 12" fill="none"><rect x="3" y="5.5" width="6" height="5" rx="1" stroke="currentColor" stroke-width="1.2"/><path d="M4.5 5.5V4a1.5 1.5 0 013 0v1.5" stroke="currentColor" stroke-width="1.2"/></svg>
+        Unlock education ranks &amp; infrastructure pipeline
+      </span>
+      <div class="footer-actions">
+        <span class="plan-label">
+          Included in
+          <span class="plan-pills">
+            <span class="plan-pill investor" tabindex="0"
+                  data-tooltip="Investor — full suburb intelligence: RCS™ breakdown, 10-year trends, all 8 supply &amp; demand metrics, fundamentals, and the infrastructure layer."
+                  data-tooltip-align="right">Investor</span>
+            <span class="plan-pill pro" tabindex="0"
+                  data-tooltip="Pro — everything in Investor plus the Dex ranking engine and portfolio comparison tools used by buyers agents."
+                  data-tooltip-align="right">Pro</span>
+          </span>
+        </span>
+        <a href="#" class="cta-primary"
+           data-tooltip="Unlock the full Lenah Valley intelligence — every metric, chart, and the 10-year trajectory. Quarterly &amp; yearly plans, cancel anytime."
+           data-tooltip-align="right">
+          Get full access
+          <svg viewBox="0 0 11 11" fill="none"><path d="M2 5.5h7M6 2.5l3 3-3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================
+       BOTTOM CTA
+       ============================================ -->
+  <div class="bottom-cta-wrapper">
+    <div class="bottom-cta">
+      <div class="bottom-cta-content">
+        <span class="bottom-cta-badge">Full HtAG Intelligence</span>
+        <h2 class="bottom-cta-headline">
+          <span class="accent">Lenah Valley</span> shows strong fundamentals. The platform tells you whether it's the <span class="accent">best fit for your portfolio.</span>
+        </h2>
+        <p class="bottom-cta-body">The signals on this page are directional. Inside HtAG you get the full RCS™ breakdown, the Growth Rate Cycle position, the 10-year price &amp; yield trajectory, supply / demand direction, and the Dex engine that ranks Lenah Valley against every other suburb in Australia — the same research layer professional buyers agents use to time entries.</p>
+        <div class="bottom-cta-actions">
+          <a href="#" class="cta-primary">
+            Unlock full analysis
+            <svg viewBox="0 0 11 11" fill="none"><path d="M2 5.5h7M6 2.5l3 3-3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </a>
+          <span class="bottom-cta-fine">Quarterly &amp; yearly plans · Cancel anytime · No lock-in</span>
+        </div>
+      </div>
+      <div class="bottom-cta-image">
+        <img src="photo/footerCTA.png" alt="HtAG intelligence preview" loading="lazy">
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<script>
+  // Property tab toggles (Houses / Units and year tabs)
+  document.querySelectorAll('.property-tabs, .year-tabs').forEach(group => {
+    group.querySelectorAll('.property-tab').forEach(btn => {
+      btn.addEventListener('click', () => {
+        group.querySelectorAll('.property-tab').forEach(b => {
+          b.classList.remove('active');
+          b.setAttribute('aria-selected', 'false');
+        });
+        btn.classList.add('active');
+        btn.setAttribute('aria-selected', 'true');
+      });
+    });
+  });
+
+  // Anchor nav active-state on scroll
+  const sections = ['good-to-know','rcs','quick-stats','market-trends','supply-demand','fundamentals','education']
+    .map(id => document.getElementById(id))
+    .filter(Boolean);
+  const anchorLinks = document.querySelectorAll('.anchor-link');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        anchorLinks.forEach(a => a.classList.toggle(
+          'active',
+          a.getAttribute('href') === '#' + entry.target.id
+        ));
+      }
+    });
+  }, { rootMargin: '-40% 0px -50% 0px' });
+  sections.forEach(s => observer.observe(s));
+</script>
+
+</body>
+</html>
