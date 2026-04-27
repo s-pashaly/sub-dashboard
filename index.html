@@ -161,6 +161,76 @@
   }
 
   /* ============================================
+     LOCKED METRIC POPOVER (richer than tooltip)
+     Hover on desktop · click/tap on touch
+     ============================================ */
+  .metric-popover {
+    position: fixed;
+    z-index: 200;
+    width: 280px;
+    background: #fff;
+    border: 1px solid var(--border-light);
+    border-radius: 14px;
+    box-shadow: 0 14px 36px rgba(11,24,44,0.14), 0 2px 8px rgba(11,24,44,0.06);
+    padding: 14px 14px 12px;
+    pointer-events: none;
+    opacity: 0;
+    transform: translateY(4px);
+    transition: opacity 0.16s ease, transform 0.16s ease;
+    font-family: var(--font);
+  }
+  .metric-popover.is-visible {
+    pointer-events: auto;
+    opacity: 1;
+    transform: translateY(0);
+  }
+  .metric-popover__eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--blue-primary);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 6px;
+  }
+  .metric-popover__eyebrow svg { width: 9px; height: 9px; }
+  .metric-popover__title {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text-ink);
+    letter-spacing: -0.01em;
+    line-height: 1.3;
+    margin-bottom: 8px;
+  }
+  .metric-popover__def {
+    font-size: 12.5px;
+    color: var(--text-body);
+    line-height: 1.5;
+    margin-bottom: 10px;
+  }
+  .metric-popover__hook {
+    font-size: 12.5px;
+    color: var(--text-ink);
+    line-height: 1.5;
+    margin-bottom: 12px;
+    padding: 9px 11px;
+    background: var(--blue-well-bg);
+    border-left: 2px solid var(--blue-primary);
+    border-radius: 0 10px 10px 0;
+    font-weight: 500;
+  }
+  .metric-popover > *:last-child { margin-bottom: 0; }
+
+  @media (max-width: 600px) {
+    .metric-popover {
+      width: calc(100vw - 24px);
+      max-width: 320px;
+    }
+  }
+
+  /* ============================================
      HEADER NAVIGATION (fixed at top)
      ============================================ */
   .header-nav {
@@ -642,7 +712,7 @@
   .risk-chip {
     background: #fff;
     border: 1px solid var(--blue-chip-border);
-    padding: 6px 11px;
+    padding: 6px 11px 6px 9px;
     border-radius: var(--radius-pill);
     font-size: 10px;
     font-weight: 600;
@@ -651,6 +721,39 @@
     letter-spacing: 0.03em;
     white-space: nowrap;
     line-height: 1;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    cursor: pointer;
+    user-select: none;
+    transition: background 0.15s ease, border-color 0.15s ease,
+                box-shadow 0.15s ease, transform 0.15s ease;
+  }
+  .risk-chip::before {
+    content: '';
+    width: 8px;
+    height: 8px;
+    flex-shrink: 0;
+    background-color: currentColor;
+    -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10' fill='none'%3E%3Crect x='2' y='4.5' width='6' height='4.5' rx='1' stroke='black' stroke-width='1.2'/%3E%3Cpath d='M3.5 4.5V3a1.5 1.5 0 013 0v1.5' stroke='black' stroke-width='1.2'/%3E%3C/svg%3E") center / contain no-repeat;
+            mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10' fill='none'%3E%3Crect x='2' y='4.5' width='6' height='4.5' rx='1' stroke='black' stroke-width='1.2'/%3E%3Cpath d='M3.5 4.5V3a1.5 1.5 0 013 0v1.5' stroke='black' stroke-width='1.2'/%3E%3C/svg%3E") center / contain no-repeat;
+    opacity: 0.6;
+    transition: opacity 0.15s ease;
+  }
+  .risk-chip:hover,
+  .risk-chip.is-active,
+  .risk-chip:focus-visible {
+    background: var(--blue-pill-bg);
+    border-color: var(--blue-primary);
+    box-shadow: 0 2px 8px rgba(1,110,239,0.14);
+    transform: translateY(-1px);
+  }
+  .risk-chip:hover::before,
+  .risk-chip.is-active::before,
+  .risk-chip:focus-visible::before { opacity: 1; }
+  .risk-chip:focus-visible {
+    outline: 2px solid var(--blue-primary);
+    outline-offset: 2px;
   }
 
   /* ============================================
@@ -686,6 +789,27 @@
     flex-direction: column;
     gap: 12px;
     align-items: center;
+    cursor: pointer;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease;
+  }
+  .sub-score:hover,
+  .sub-score.is-active,
+  .sub-score:focus-visible {
+    border-color: var(--blue-primary);
+    box-shadow: 0 4px 14px rgba(1,110,239,0.10);
+    transform: translateY(-1px);
+  }
+  .sub-score:hover .sub-score-lock,
+  .sub-score.is-active .sub-score-lock,
+  .sub-score:focus-visible .sub-score-lock {
+    color: var(--blue-primary);
+  }
+  .sub-score:focus-visible {
+    outline: 2px solid var(--blue-primary);
+    outline-offset: 2px;
+  }
+  .sub-score .sub-score-lock {
+    transition: color 0.15s ease;
   }
   .sub-score-lock {
     align-self: flex-end;
@@ -1195,7 +1319,7 @@
         Lenah Valley scores an <strong>RCS™ of 79</strong> — a strong overall signal, but the headline doesn't tell you <strong>why</strong>. The three sub-scores below reveal whether that 79 is earned through <strong>risk minimisation</strong>, <strong>capital growth</strong>, or <strong>cashflow</strong> — and which portfolio brief it fits. <span class="accent">Unlock the breakdown.</span>
       </p>
       <div class="sub-scores">
-        <div class="sub-score">
+        <div class="sub-score" data-metric="lower-risk-rcs">
           <span class="sub-score-lock" aria-label="Locked">
             <svg viewBox="0 0 10 10" fill="none"><rect x="2" y="4.5" width="6" height="4.5" rx="1" stroke="currentColor" stroke-width="1.2"/><path d="M3.5 4.5V3a1.5 1.5 0 013 0v1.5" stroke="currentColor" stroke-width="1.2"/></svg>
           </span>
@@ -1205,7 +1329,7 @@
             <div class="sub-score-bar"><span class="sub-score-bar-fill"></span></div>
           </div>
         </div>
-        <div class="sub-score">
+        <div class="sub-score" data-metric="capital-growth-rcs">
           <span class="sub-score-lock" aria-label="Locked">
             <svg viewBox="0 0 10 10" fill="none"><rect x="2" y="4.5" width="6" height="4.5" rx="1" stroke="currentColor" stroke-width="1.2"/><path d="M3.5 4.5V3a1.5 1.5 0 013 0v1.5" stroke="currentColor" stroke-width="1.2"/></svg>
           </span>
@@ -1215,7 +1339,7 @@
             <div class="sub-score-bar"><span class="sub-score-bar-fill"></span></div>
           </div>
         </div>
-        <div class="sub-score">
+        <div class="sub-score" data-metric="cashflow-rcs">
           <span class="sub-score-lock" aria-label="Locked">
             <svg viewBox="0 0 10 10" fill="none"><rect x="2" y="4.5" width="6" height="4.5" rx="1" stroke="currentColor" stroke-width="1.2"/><path d="M3.5 4.5V3a1.5 1.5 0 013 0v1.5" stroke="currentColor" stroke-width="1.2"/></svg>
           </span>
@@ -1236,17 +1360,11 @@
         <span class="plan-label">
           Included in
           <span class="plan-pills">
-            <span class="plan-pill investor" tabindex="0"
-                  data-tooltip="Investor — full suburb intelligence: RCS™ breakdown, 10-year trends, all 8 supply &amp; demand metrics, fundamentals, and the infrastructure layer."
-                  data-tooltip-align="right">Investor</span>
-            <span class="plan-pill pro" tabindex="0"
-                  data-tooltip="Pro — everything in Investor plus the Dex ranking engine and portfolio comparison tools used by buyers agents."
-                  data-tooltip-align="right">Pro</span>
+            <span class="plan-pill investor" tabindex="0">Investor</span>
+            <span class="plan-pill pro" tabindex="0">Pro</span>
           </span>
         </span>
-        <a href="#" class="cta-primary"
-           data-tooltip="Unlock the full Lenah Valley intelligence — every metric, chart, and the 10-year trajectory. Quarterly &amp; yearly plans, cancel anytime."
-           data-tooltip-align="right">
+        <a href="#" class="cta-primary">
           Get full access
           <svg viewBox="0 0 11 11" fill="none"><path d="M2 5.5h7M6 2.5l3 3-3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </a>
@@ -1286,26 +1404,20 @@
         <svg viewBox="0 0 12 12" fill="none"><rect x="3" y="5.5" width="6" height="5" rx="1" stroke="currentColor" stroke-width="1.2"/><path d="M4.5 5.5V4a1.5 1.5 0 013 0v1.5" stroke="currentColor" stroke-width="1.2"/></svg>
         3 more risk signals locked for Lenah Valley
         <span class="footer-teasers">
-          <span class="risk-chip">EDI Risk</span>
-          <span class="risk-chip">Bushfire</span>
-          <span class="risk-chip">Flood</span>
+          <span class="risk-chip" data-metric="edi-risk">EDI Risk</span>
+          <span class="risk-chip" data-metric="bushfire">Bushfire</span>
+          <span class="risk-chip" data-metric="flood">Flood</span>
         </span>
       </span>
       <div class="footer-actions">
         <span class="plan-label">
           Included in
           <span class="plan-pills">
-            <span class="plan-pill investor" tabindex="0"
-                  data-tooltip="Investor — full suburb intelligence: RCS™ breakdown, 10-year trends, all 8 supply &amp; demand metrics, fundamentals, and the infrastructure layer."
-                  data-tooltip-align="right">Investor</span>
-            <span class="plan-pill pro" tabindex="0"
-                  data-tooltip="Pro — everything in Investor plus the Dex ranking engine and portfolio comparison tools used by buyers agents."
-                  data-tooltip-align="right">Pro</span>
+            <span class="plan-pill investor" tabindex="0">Investor</span>
+            <span class="plan-pill pro" tabindex="0">Pro</span>
           </span>
         </span>
-        <a href="#" class="cta-primary"
-           data-tooltip="Unlock the full Lenah Valley intelligence — every metric, chart, and the 10-year trajectory. Quarterly &amp; yearly plans, cancel anytime."
-           data-tooltip-align="right">
+        <a href="#" class="cta-primary">
           Get full access
           <svg viewBox="0 0 11 11" fill="none"><path d="M2 5.5h7M6 2.5l3 3-3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </a>
@@ -1428,10 +1540,10 @@
           <div class="q-card-content">
             <p class="q-card-text">Cycle phase tells you whether you're buying near the bottom (room to run) or top (compression ahead). Yield trajectory tells you whether cashflow is durable or being eroded — the single most important question for a long-hold thesis.</p>
             <div class="risk-chips">
-              <span class="risk-chip">Cycle Phase</span>
-              <span class="risk-chip">Cycle Position</span>
-              <span class="risk-chip">Yield Trajectory</span>
-              <span class="risk-chip">Rent vs Price Spread</span>
+              <span class="risk-chip" data-metric="cycle-phase">Cycle Phase</span>
+              <span class="risk-chip" data-metric="cycle-position">Cycle Position</span>
+              <span class="risk-chip" data-metric="yield-trajectory">Yield Trajectory</span>
+              <span class="risk-chip" data-metric="rent-price-spread">Rent vs Price Spread</span>
             </div>
           </div>
           <div class="q-card-preview">
@@ -1449,17 +1561,11 @@
         <span class="plan-label">
           Included in
           <span class="plan-pills">
-            <span class="plan-pill investor" tabindex="0"
-                  data-tooltip="Investor — full suburb intelligence: RCS™ breakdown, 10-year trends, all 8 supply &amp; demand metrics, fundamentals, and the infrastructure layer."
-                  data-tooltip-align="right">Investor</span>
-            <span class="plan-pill pro" tabindex="0"
-                  data-tooltip="Pro — everything in Investor plus the Dex ranking engine and portfolio comparison tools used by buyers agents."
-                  data-tooltip-align="right">Pro</span>
+            <span class="plan-pill investor" tabindex="0">Investor</span>
+            <span class="plan-pill pro" tabindex="0">Pro</span>
           </span>
         </span>
-        <a href="#" class="cta-primary"
-           data-tooltip="Unlock the full Lenah Valley intelligence — every metric, chart, and the 10-year trajectory. Quarterly &amp; yearly plans, cancel anytime."
-           data-tooltip-align="right">
+        <a href="#" class="cta-primary">
           Get full access
           <svg viewBox="0 0 11 11" fill="none"><path d="M2 5.5h7M6 2.5l3 3-3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </a>
@@ -1494,10 +1600,10 @@
             <div class="q-card-content">
               <p class="q-card-text">With Stock on Market already at 0.36%, the trend is what matters. SoM, inventory, building approvals and hold period together reveal whether the market is starving for stock (price pressure up) or quietly building a pipeline (pressure down).</p>
               <div class="risk-chips">
-                <span class="risk-chip">Stock on Market</span>
-                <span class="risk-chip">Inventory</span>
-                <span class="risk-chip">Building Approvals</span>
-                <span class="risk-chip">Hold Period</span>
+                <span class="risk-chip" data-metric="stock-on-market">Stock on Market</span>
+                <span class="risk-chip" data-metric="inventory">Inventory</span>
+                <span class="risk-chip" data-metric="building-approvals">Building Approvals</span>
+                <span class="risk-chip" data-metric="hold-period">Hold Period</span>
               </div>
             </div>
             <div class="q-card-preview">
@@ -1519,10 +1625,10 @@
             <div class="q-card-content">
               <p class="q-card-text">With vacancy at 0.59%, the question is whether demand is still building or quietly peaking. Days on market, vacancy, search index and clearance rate are the four pulse-points — when they diverge, they signal a turning point.</p>
               <div class="risk-chips">
-                <span class="risk-chip">Days on Market</span>
-                <span class="risk-chip">Vacancy Rate</span>
-                <span class="risk-chip">Search Index</span>
-                <span class="risk-chip">Clearance Rate</span>
+                <span class="risk-chip" data-metric="days-on-market">Days on Market</span>
+                <span class="risk-chip" data-metric="vacancy-rate">Vacancy Rate</span>
+                <span class="risk-chip" data-metric="search-index">Search Index</span>
+                <span class="risk-chip" data-metric="clearance-rate">Clearance Rate</span>
               </div>
             </div>
             <div class="q-card-preview">
@@ -1541,17 +1647,11 @@
         <span class="plan-label">
           Included in
           <span class="plan-pills">
-            <span class="plan-pill investor" tabindex="0"
-                  data-tooltip="Investor — full suburb intelligence: RCS™ breakdown, 10-year trends, all 8 supply &amp; demand metrics, fundamentals, and the infrastructure layer."
-                  data-tooltip-align="right">Investor</span>
-            <span class="plan-pill pro" tabindex="0"
-                  data-tooltip="Pro — everything in Investor plus the Dex ranking engine and portfolio comparison tools used by buyers agents."
-                  data-tooltip-align="right">Pro</span>
+            <span class="plan-pill investor" tabindex="0">Investor</span>
+            <span class="plan-pill pro" tabindex="0">Pro</span>
           </span>
         </span>
-        <a href="#" class="cta-primary"
-           data-tooltip="Unlock the full Lenah Valley intelligence — every metric, chart, and the 10-year trajectory. Quarterly &amp; yearly plans, cancel anytime."
-           data-tooltip-align="right">
+        <a href="#" class="cta-primary">
           Get full access
           <svg viewBox="0 0 11 11" fill="none"><path d="M2 5.5h7M6 2.5l3 3-3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </a>
@@ -1587,9 +1687,9 @@
             <div class="q-card-content">
               <p class="q-card-text">IRSAD 1047 hints at affluence, but socio-economic strength alone doesn't guarantee resilience. Combined with the renter-to-owner balance and unit-to-house ratio, you get the three signals that separate a tightly-held submarket from one carrying hidden volatility.</p>
               <div class="risk-chips">
-                <span class="risk-chip">IRSAD</span>
-                <span class="risk-chip">Renter to Owner</span>
-                <span class="risk-chip">Units to Houses</span>
+                <span class="risk-chip" data-metric="irsad">IRSAD</span>
+                <span class="risk-chip" data-metric="renter-to-owner">Renter to Owner</span>
+                <span class="risk-chip" data-metric="units-to-houses">Units to Houses</span>
               </div>
             </div>
             <div class="q-card-preview">
@@ -1611,8 +1711,8 @@
             <div class="q-card-content">
               <p class="q-card-text">Today's $551K is a snapshot. Projected ROI and the volatility index tell you whether to commit capital now, wait for a softer entry, or rotate into a steadier Hobart submarket.</p>
               <div class="risk-chips">
-                <span class="risk-chip">Projected Annual ROI</span>
-                <span class="risk-chip">Volatility Index</span>
+                <span class="risk-chip" data-metric="projected-annual-roi">Projected Annual ROI</span>
+                <span class="risk-chip" data-metric="volatility-index">Volatility Index</span>
               </div>
             </div>
             <div class="q-card-preview">
@@ -1634,10 +1734,10 @@
             <div class="q-card-content">
               <p class="q-card-text">Tightly-held suburbs reward long-hold investors but punish anyone who needs liquidity. Annual sales and rental volume reveal whether your capital can reposition — or sits structurally locked in.</p>
               <div class="risk-chips">
-                <span class="risk-chip">Annual Sales Volume</span>
-                <span class="risk-chip">Annual Rental Volume</span>
-                <span class="risk-chip">Search Index</span>
-                <span class="risk-chip">Clearance Rate</span>
+                <span class="risk-chip" data-metric="annual-sales-volume">Annual Sales Volume</span>
+                <span class="risk-chip" data-metric="annual-rental-volume">Annual Rental Volume</span>
+                <span class="risk-chip" data-metric="search-index">Search Index</span>
+                <span class="risk-chip" data-metric="clearance-rate">Clearance Rate</span>
               </div>
             </div>
             <div class="q-card-preview">
@@ -1656,17 +1756,11 @@
         <span class="plan-label">
           Included in
           <span class="plan-pills">
-            <span class="plan-pill investor" tabindex="0"
-                  data-tooltip="Investor — full suburb intelligence: RCS™ breakdown, 10-year trends, all 8 supply &amp; demand metrics, fundamentals, and the infrastructure layer."
-                  data-tooltip-align="right">Investor</span>
-            <span class="plan-pill pro" tabindex="0"
-                  data-tooltip="Pro — everything in Investor plus the Dex ranking engine and portfolio comparison tools used by buyers agents."
-                  data-tooltip-align="right">Pro</span>
+            <span class="plan-pill investor" tabindex="0">Investor</span>
+            <span class="plan-pill pro" tabindex="0">Pro</span>
           </span>
         </span>
-        <a href="#" class="cta-primary"
-           data-tooltip="Unlock the full Lenah Valley intelligence — every metric, chart, and the 10-year trajectory. Quarterly &amp; yearly plans, cancel anytime."
-           data-tooltip-align="right">
+        <a href="#" class="cta-primary">
           Get full access
           <svg viewBox="0 0 11 11" fill="none"><path d="M2 5.5h7M6 2.5l3 3-3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </a>
@@ -1699,11 +1793,11 @@
           <div class="q-card-content">
             <p class="q-card-text">School ranks anchor family demand and tenant quality. The active infrastructure pipeline shifts a suburb's price ceiling over the next 5–10 years. Together they tell you whether Lenah Valley has structural support for the next leg of capital growth.</p>
             <div class="risk-chips">
-              <span class="risk-chip">School Rank</span>
-              <span class="risk-chip">Catchment Quality</span>
-              <span class="risk-chip">Infrastructure Spend</span>
-              <span class="risk-chip">Transport Projects</span>
-              <span class="risk-chip">Hospitals &amp; Employment</span>
+              <span class="risk-chip" data-metric="school-rank">School Rank</span>
+              <span class="risk-chip" data-metric="catchment-quality">Catchment Quality</span>
+              <span class="risk-chip" data-metric="infrastructure-spend">Infrastructure Spend</span>
+              <span class="risk-chip" data-metric="transport-projects">Transport Projects</span>
+              <span class="risk-chip" data-metric="hospitals-employment">Hospitals &amp; Employment</span>
             </div>
           </div>
           <div class="q-card-preview">
@@ -1721,17 +1815,11 @@
         <span class="plan-label">
           Included in
           <span class="plan-pills">
-            <span class="plan-pill investor" tabindex="0"
-                  data-tooltip="Investor — full suburb intelligence: RCS™ breakdown, 10-year trends, all 8 supply &amp; demand metrics, fundamentals, and the infrastructure layer."
-                  data-tooltip-align="right">Investor</span>
-            <span class="plan-pill pro" tabindex="0"
-                  data-tooltip="Pro — everything in Investor plus the Dex ranking engine and portfolio comparison tools used by buyers agents."
-                  data-tooltip-align="right">Pro</span>
+            <span class="plan-pill investor" tabindex="0">Investor</span>
+            <span class="plan-pill pro" tabindex="0">Pro</span>
           </span>
         </span>
-        <a href="#" class="cta-primary"
-           data-tooltip="Unlock the full Lenah Valley intelligence — every metric, chart, and the 10-year trajectory. Quarterly &amp; yearly plans, cancel anytime."
-           data-tooltip-align="right">
+        <a href="#" class="cta-primary">
           Get full access
           <svg viewBox="0 0 11 11" fill="none"><path d="M2 5.5h7M6 2.5l3 3-3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </a>
@@ -1763,6 +1851,18 @@
       </div>
     </div>
   </div>
+
+
+<!-- ===== Locked metric popover (Mat feedback) ===== -->
+<div id="metric-popover" class="metric-popover" role="dialog" aria-hidden="true" aria-labelledby="metric-popover-title">
+  <div class="metric-popover__eyebrow">
+    <svg viewBox="0 0 10 10" fill="none" aria-hidden="true"><rect x="2" y="4.5" width="6" height="4.5" rx="1" stroke="currentColor" stroke-width="1.2"/><path d="M3.5 4.5V3a1.5 1.5 0 013 0v1.5" stroke="currentColor" stroke-width="1.2"/></svg>
+    <span>Locked metric</span>
+  </div>
+  <div id="metric-popover-title" class="metric-popover__title" data-pop-title></div>
+  <p class="metric-popover__def" data-pop-def></p>
+  <div class="metric-popover__hook" data-pop-hook></div>
+</div>
 
 </main>
 
@@ -1797,6 +1897,295 @@
     });
   }, { rootMargin: '-40% 0px -50% 0px' });
   sections.forEach(s => observer.observe(s));
+
+  // ====================================================================
+  // Locked-metric popover (Mat feedback)
+  // 3-line teaser per metric: definition → outcome hook → withheld answer.
+  // Hover on desktop, click/tap everywhere. Single popover element re-used.
+  // ====================================================================
+  const METRIC_COPY = {
+    'lower-risk-rcs': {
+      title: 'Lower Risk RCS™',
+      def: "HtAG's risk-minimisation score — how exposed the suburb is to volatility, oversupply, and rental softness.",
+      hook: 'If you want a tenant-stable, downside-protected hold, this needs to be high.'
+    },
+    'capital-growth-rcs': {
+      title: 'Capital Growth RCS™',
+      def: "HtAG's growth-potential score — projected price acceleration relative to all Australian suburbs.",
+      hook: 'If you want compounding capital growth across 7–10 years, this needs to be high.'
+    },
+    'cashflow-rcs': {
+      title: 'Cashflow RCS™',
+      def: "HtAG's yield-resilience score — how durable the cashflow position is across the cycle.",
+      hook: 'If you want positive cashflow that holds up when rates move, this needs to be high.'
+    },
+    'edi-risk': {
+      title: 'EDI Risk',
+      def: 'Economic Diversification Index — how reliant the local economy is on any single industry or employer.',
+      hook: 'If you want resilient long-hold capital growth and rent stability, the diversification index needs to be high.'
+    },
+    'bushfire': {
+      title: 'Bushfire Risk',
+      def: 'Bushfire exposure rating, blending state hazard overlays with dwelling-level proximity.',
+      hook: 'If you want long-term insurability and tenant safety, this needs to be low.'
+    },
+    'flood': {
+      title: 'Flood Risk',
+      def: 'Flood-zone exposure scored against historic flood maps and dwelling-level overlays.',
+      hook: 'If you want insurability and clean capital growth, this needs to be low.'
+    },
+    'cycle-phase': {
+      title: 'Cycle Phase',
+      def: 'Where the suburb sits in its growth cycle — early, mid, late, or correction.',
+      hook: 'If you want runway before a turn, this needs to be early or mid.'
+    },
+    'cycle-position': {
+      title: 'Cycle Position',
+      def: 'How far along the suburb is within its current phase, measured against historical cadence.',
+      hook: 'If you want a buffer before the cycle turns, this needs to be early-stage.'
+    },
+    'yield-trajectory': {
+      title: 'Yield Trajectory',
+      def: 'The 10-year direction of gross rental yield — expanding, flat, or compressing.',
+      hook: 'If you want durable cashflow over the hold, this needs to be expanding or stable.'
+    },
+    'rent-price-spread': {
+      title: 'Rent vs Price Spread',
+      def: 'The gap between rent growth and price growth — which one is leading the market.',
+      hook: 'If you want yield to expand into the next cycle, rent growth needs to be outpacing price growth.'
+    },
+    'stock-on-market': {
+      title: 'Stock on Market',
+      def: 'Active listings as a percentage of total dwellings — the inventory pressure gauge.',
+      hook: 'If you want price pressure tilting up, this needs to be low and trending lower.'
+    },
+    'inventory': {
+      title: 'Inventory (Months of Stock)',
+      def: 'Months of supply at the current sales rate — how long it would take to clear active listings.',
+      hook: 'If you want a seller-favoured market with buyer competition, this needs to be under 3 months.'
+    },
+    'building-approvals': {
+      title: 'Building Approvals',
+      def: 'Recent dwelling approvals — the leading indicator of future supply.',
+      hook: 'If you want scarcity to support prices, this needs to be low.'
+    },
+    'hold-period': {
+      title: 'Hold Period',
+      def: 'Average years owners hold property in the area before selling.',
+      hook: 'If you want a tightly-held submarket where stock rarely turns over, this needs to be high.'
+    },
+    'days-on-market': {
+      title: 'Days on Market',
+      def: 'Average days listings sit before selling.',
+      hook: 'If you want urgent buyer demand pricing in, this needs to be low and falling.'
+    },
+    'vacancy-rate': {
+      title: 'Vacancy Rate',
+      def: 'Share of rentals sitting empty — the rental tightness gauge.',
+      hook: 'If you want rent growth to continue, this needs to stay under 2%.'
+    },
+    'search-index': {
+      title: 'Search Index',
+      def: 'Online buyer-search activity per listing — the demand pulse.',
+      hook: 'If you want price growth ahead of the print, this needs to be elevated and rising.'
+    },
+    'clearance-rate': {
+      title: 'Clearance Rate',
+      def: 'Share of auction listings that sell at or above reserve.',
+      hook: 'If you want a competitive buyer market, this needs to be above 70%.'
+    },
+    'irsad': {
+      title: 'IRSAD',
+      def: 'ABS Index of Relative Socio-Economic Advantage and Disadvantage — household income, education, and occupation, indexed.',
+      hook: 'If you want resilient owner-occupier demand and strong tenant quality, this needs to be above 1000.'
+    },
+    'renter-to-owner': {
+      title: 'Renter-to-Owner Ratio',
+      def: 'Ratio of renting to owner-occupier households.',
+      hook: 'If you want stable tenure and lower volatility, owner-occupiers need to dominate.'
+    },
+    'units-to-houses': {
+      title: 'Units to Houses',
+      def: 'Share of unit/apartment stock vs detached houses in the suburb.',
+      hook: 'If you want lower oversupply risk, this needs to be skewed toward houses.'
+    },
+    'projected-annual-roi': {
+      title: 'Projected Annual ROI',
+      def: "HtAG's modelled total return (price + yield) over the next 12 months.",
+      hook: 'If you want capital deployed with conviction, this needs to clear your hurdle rate.'
+    },
+    'volatility-index': {
+      title: 'Volatility Index',
+      def: 'Price volatility over the last 10 years — how much returns swing year to year.',
+      hook: 'If you want a steady compounding hold (not a rollercoaster), this needs to be low.'
+    },
+    'annual-sales-volume': {
+      title: 'Annual Sales Volume',
+      def: 'Number of houses transacting per year — the exit-market gauge.',
+      hook: "If you want clean liquidity when you sell, this needs to be high enough that your listing won't sit."
+    },
+    'annual-rental-volume': {
+      title: 'Annual Rental Volume',
+      def: 'Annual rental listings — the tenant-market depth gauge.',
+      hook: 'If you want a steady tenant pipeline between leases, this needs to be high.'
+    },
+    'school-rank': {
+      title: 'School Rank',
+      def: 'Ranking of the dominant school catchment(s) against the rest of the state.',
+      hook: 'If you want family-driven demand and high tenant quality, this needs to be top-tier.'
+    },
+    'catchment-quality': {
+      title: 'Catchment Quality',
+      def: 'Composite catchment score — academic results, demand, and feeder reputation.',
+      hook: 'If you want sustained owner-occupier demand from upgrading families, this needs to be high.'
+    },
+    'infrastructure-spend': {
+      title: 'Infrastructure Spend',
+      def: 'Government and private infrastructure dollars committed within commute range over the next 5 years.',
+      hook: 'If you want a price-ceiling lift, this needs to be material and on the books — not just "proposed".'
+    },
+    'transport-projects': {
+      title: 'Transport Projects',
+      def: 'Active or funded road, rail, and ferry projects affecting commute times.',
+      hook: 'If you want a structural lift in liveability, these need to be funded — not just announced.'
+    },
+    'hospitals-employment': {
+      title: 'Hospitals & Employment',
+      def: 'Major employment hubs and hospital footprints within commute distance.',
+      hook: 'If you want long-term tenant and buyer demand, these anchors need to be nearby and growing.'
+    }
+  };
+
+  (function initMetricPopover() {
+    const popover = document.getElementById('metric-popover');
+    if (!popover) return;
+
+    const elTitle = popover.querySelector('[data-pop-title]');
+    const elDef   = popover.querySelector('[data-pop-def]');
+    const elHook  = popover.querySelector('[data-pop-hook]');
+
+    let activeTrigger = null;
+    let showTimer = null;
+    let hideTimer = null;
+    const isTouch = window.matchMedia('(hover: none)').matches;
+
+    function clearTimers() {
+      clearTimeout(showTimer);
+      clearTimeout(hideTimer);
+    }
+
+    function position(trigger) {
+      const r = trigger.getBoundingClientRect();
+      const pw = popover.offsetWidth;
+      const ph = popover.offsetHeight;
+      const margin = 10;
+
+      let top = r.top - ph - margin;
+      let placement = 'top';
+      if (top < margin) {
+        top = r.bottom + margin;
+        placement = 'bottom';
+      }
+
+      let left = r.left + r.width / 2 - pw / 2;
+      left = Math.max(margin, Math.min(left, window.innerWidth - pw - margin));
+
+      popover.style.top = top + 'px';
+      popover.style.left = left + 'px';
+      popover.dataset.placement = placement;
+    }
+
+    function show(trigger) {
+      const key = trigger.getAttribute('data-metric');
+      const copy = METRIC_COPY[key];
+      if (!copy) return;
+
+      elTitle.textContent = copy.title;
+      elDef.textContent   = copy.def;
+      elHook.textContent  = copy.hook;
+
+      // Render once before measuring so width/height are accurate
+      popover.style.visibility = 'hidden';
+      popover.classList.add('is-visible');
+      position(trigger);
+      popover.style.visibility = '';
+      popover.setAttribute('aria-hidden', 'false');
+
+      if (activeTrigger && activeTrigger !== trigger) {
+        activeTrigger.classList.remove('is-active');
+      }
+      trigger.classList.add('is-active');
+      activeTrigger = trigger;
+    }
+
+    function hide() {
+      popover.classList.remove('is-visible');
+      popover.setAttribute('aria-hidden', 'true');
+      if (activeTrigger) {
+        activeTrigger.classList.remove('is-active');
+        activeTrigger = null;
+      }
+    }
+
+    document.querySelectorAll('[data-metric]').forEach(el => {
+      el.setAttribute('tabindex', '0');
+      el.setAttribute('role', 'button');
+      el.setAttribute('aria-haspopup', 'dialog');
+
+      if (!isTouch) {
+        el.addEventListener('mouseenter', () => {
+          clearTimers();
+          showTimer = setTimeout(() => show(el), 90);
+        });
+        el.addEventListener('mouseleave', () => {
+          clearTimers();
+          hideTimer = setTimeout(hide, 160);
+        });
+      }
+
+      el.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        clearTimers();
+        if (activeTrigger === el && popover.classList.contains('is-visible')) {
+          hide();
+        } else {
+          show(el);
+        }
+      });
+
+      el.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          el.click();
+        }
+      });
+    });
+
+    if (!isTouch) {
+      popover.addEventListener('mouseenter', clearTimers);
+      popover.addEventListener('mouseleave', () => {
+        clearTimers();
+        hideTimer = setTimeout(hide, 160);
+      });
+    }
+
+    // Outside click closes
+    document.addEventListener('click', (e) => {
+      if (!e.target.closest('[data-metric]') && !e.target.closest('.metric-popover')) {
+        hide();
+      }
+    });
+
+    // Escape closes
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') hide();
+    });
+
+    // Reposition / hide on scroll & resize (avoid stale anchor)
+    window.addEventListener('scroll', hide, { passive: true });
+    window.addEventListener('resize', hide);
+  })();
 </script>
 
 </body>
