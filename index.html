@@ -85,6 +85,7 @@
     font-size: 13px;
     line-height: 1.5;
     -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
   }
   a { color: inherit; text-decoration: none; }
   button { font-family: inherit; cursor: pointer; border: none; background: none; }
@@ -320,24 +321,38 @@
   .breadcrumb .current { color: var(--text-muted); }
 
   /* ============================================
-     HERO (Overview + StreetLens preview)
+     HERO (Full-bleed map banner + full-width Overview)
      ============================================ */
-  .hero {
-    display: grid;
-    grid-template-columns: 1fr 340px;
-    gap: 20px;
-    align-items: stretch;
+  .hero-banner {
+    /* Break out of the .page max-width to span the full viewport */
+    width: 100vw;
+    margin-left: calc(-50vw + 50%);
+    height: 240px;
+    border-top: 1px solid var(--border-container);
+    border-bottom: 1px solid var(--border-container);
+    position: relative;
+    background: #eef2f7;
+    overflow: hidden;
+  }
+  .hero-banner iframe {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+    display: block;
   }
   .overview {
     background: #fff;
     border: 1px solid var(--border-container);
     border-radius: var(--radius-container);
-    padding: 25px;
+    padding: 20px;
     display: flex;
     flex-direction: column;
-    gap: 80px;
+    gap: 30px;
   }
-  .location-info { display: flex; flex-direction: column; gap: 18px; }
+  .overview-top { display: flex; flex-direction: column; gap: 30px; }
+  .location-info { display: flex; flex-direction: column; gap: 20px; align-items: flex-start; }
   .location-details { display: flex; flex-direction: column; gap: 5px; }
   .suburb-name {
     font-size: 30px;
@@ -349,8 +364,10 @@
 
   .property-tabs-row {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     justify-content: space-between;
+    width: 100%;
+    gap: 20px;
   }
   .property-tabs { display: flex; gap: 2px; }
   .property-tab {
@@ -435,40 +452,245 @@
   .key-metric.rcs .metric-value { color: var(--blue-primary); }
   .key-metric.rcs .metric-sub { color: var(--blue-primary); }
 
-  /* StreetLens preview (Google Maps embed) */
-  .streetlens {
-    background: #fff;
-    border: 1px solid var(--border-container);
-    border-radius: var(--radius-container);
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-  }
-  .streetlens-map {
-    flex: 1;
-    min-height: 260px;
-    position: relative;
-    background: #eef2f7;
-  }
-  .streetlens-map iframe {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
+  /* "See more" inline link inside the Overview card */
+  .see-more-btn {
+    align-self: flex-start;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--blue-primary);
+    background: none;
     border: 0;
-    display: block;
+    padding: 0;
+    cursor: pointer;
   }
-  .streetlens-label {
-    background: #fff;
-    padding: 10px 20px;
+  .see-more-btn .chev {
+    width: 10px;
+    height: 10px;
+    transition: transform 0.2s ease;
+  }
+  .see-more-btn[aria-expanded="true"] .chev { transform: rotate(90deg); }
+
+  /* Expanded "See more" content inside Overview */
+  .overview-expanded {
+    display: none;
+    flex-direction: column;
+    gap: 30px;
+  }
+  .overview-expanded.is-open { display: flex; }
+
+  .expanded-section { display: flex; flex-direction: column; gap: 20px; }
+
+  /* Section title row: small uppercase grey label + horizontal hairline */
+  .expanded-section-title {
     display: flex;
     align-items: center;
-    gap: 6px;
-    font-size: 11px;
+    gap: 10px;
+    font-size: 12px;
+    font-weight: 600;
     color: var(--text-muted);
-    border-top: 1px solid var(--border-light);
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
   }
-  .streetlens-label svg { width: 12px; height: 12px; color: var(--blue-primary); }
+  .expanded-section-title::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border-light);
+  }
+
+  /* Area Stats: 2 columns matching key-metrics rhythm with vertical dividers */
+  .expanded-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    align-items: start;
+  }
+  .expanded-stat {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    padding-left: 13px;
+    border-left: 1px solid var(--border-light);
+  }
+  .expanded-stat:first-child {
+    padding-left: 0;
+    border-left: 0;
+  }
+  .expanded-stat-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--blue-primary);
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+  }
+  .expanded-stat-value {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--text-ink);
+    line-height: 1;
+    letter-spacing: -0.005em;
+  }
+
+  /* Bedrooms: 4 columns with vertical dividers */
+  .expanded-bedrooms-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    align-items: start;
+  }
+  .expanded-bedroom {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    padding-left: 13px;
+    border-left: 1px solid var(--border-light);
+  }
+  .expanded-bedroom:first-child {
+    padding-left: 0;
+    border-left: 0;
+  }
+  .expanded-bedroom-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--blue-primary);
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+  }
+  .expanded-bedroom-rows { display: flex; flex-direction: column; gap: 5px; }
+  .expanded-row {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+  .expanded-row-label {
+    width: 35px;
+    flex-shrink: 0;
+    color: var(--text-muted);
+    font-weight: 600;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+  }
+  .expanded-row-value-wrap {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 7px;
+    flex: 1;
+    min-width: 0;
+  }
+  .expanded-row-value {
+    color: var(--text-ink);
+    font-weight: 700;
+    font-size: 14px;
+    line-height: 1;
+    white-space: nowrap;
+  }
+  .expanded-row-change {
+    color: var(--green-text);
+    font-weight: 600;
+    font-size: 11px;
+    white-space: nowrap;
+  }
+
+  /* ============================================
+     GOOD TO KNOW POPUP MODAL
+     ============================================ */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.55);
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.2s ease, visibility 0.2s;
+  }
+  .modal-overlay.is-open { opacity: 1; visibility: visible; }
+  .modal {
+    background: #fff;
+    border-radius: var(--radius-container);
+    width: 100%;
+    max-width: 1040px;
+    max-height: calc(100vh - 48px);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+    transform: translateY(10px);
+    transition: transform 0.2s ease;
+  }
+  .modal-overlay.is-open .modal { transform: translateY(0); }
+  .modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 22px 25px 6px;
+  }
+  .modal-title {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--text-ink);
+    letter-spacing: -0.015em;
+  }
+  .modal-close {
+    background: none;
+    border: 0;
+    cursor: pointer;
+    padding: 6px;
+    color: var(--text-muted);
+    border-radius: 6px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.15s, color 0.15s;
+  }
+  .modal-close:hover { background: var(--bg-page); color: var(--text-ink); }
+  .modal-close svg { width: 16px; height: 16px; }
+  .modal-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 14px 25px 22px;
+    font-size: 13.5px;
+    color: var(--text-body);
+    line-height: 1.55;
+  }
+  .modal-body h3 {
+    font-size: 13.5px;
+    font-weight: 700;
+    color: var(--text-ink);
+    margin: 18px 0 6px;
+    letter-spacing: -0.005em;
+  }
+  .modal-body h3:first-child { margin-top: 0; }
+  .modal-body p { margin-bottom: 6px; }
+  .modal-body strong { font-weight: 700; color: var(--text-ink); }
+  .modal-body a { color: var(--blue-primary); text-decoration: underline; }
+  .modal-footer {
+    border-top: 1px solid var(--border-light);
+    padding: 14px 14px 14px 25px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+    flex-wrap: wrap;
+  }
+  .modal-callout {
+    flex: 1;
+    background: #f2fef6;
+    border-left: 2px solid var(--green-text);
+    padding: 10px 15px;
+    border-radius: 0 10px 10px 0;
+    font-size: 13px;
+    color: var(--text-body);
+    min-width: 220px;
+  }
+  body.modal-open { overflow: hidden; }
 
   /* ============================================
      ANCHOR NAV (sticky under the header)
@@ -1020,12 +1242,18 @@
     border-radius: 6px;
     overflow: hidden;
     position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 108px;
   }
-  .q-card-preview img {
+  .q-card-preview .q-illus {
     display: block;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
+    max-width: 70%;
+    max-height: 75%;
+    width: auto;
+    height: auto;
+    object-fit: contain;
   }
 
   /* ============================================
@@ -1116,16 +1344,16 @@
      RESPONSIVE
      ============================================ */
   @media (max-width: 960px) {
-    .hero { grid-template-columns: 1fr; }
-    .streetlens-map { min-height: 180px; }
+    .hero-banner { height: 160px; }
     .anchor-nav { overflow-x: auto; padding-bottom: 10px; }
     .key-metrics { grid-template-columns: repeat(2, 1fr); }
     .key-metric { padding-left: 0; border-left: 0; padding-top: 16px; border-top: 1px solid var(--border-light); }
     .key-metric:nth-child(1), .key-metric:nth-child(2) { padding-top: 0; border-top: 0; }
+    .expanded-bedrooms-grid { grid-template-columns: repeat(2, 1fr); }
     .nav-links { display: none; }
     .user-action.search span, .user-action.mastermind span { display: none; }
     .q-card-body { flex-direction: column; gap: 15px; }
-    .q-card-preview { width: 100%; height: 120px; }
+    .q-card-preview { width: 100%; min-height: 130px; }
     .stats-row { grid-template-columns: 1fr; }
     .sub-scores { grid-template-columns: 1fr; }
     .bottom-cta { flex-direction: column; }
@@ -1133,6 +1361,7 @@
     .bottom-cta-headline { font-size: 24px; }
     .section-footer { padding: 12px; align-items: flex-start; }
     .footer-info { flex-wrap: wrap; }
+    .modal-footer { padding: 14px; }
   }
 </style>
 </head>
@@ -1195,24 +1424,45 @@
     <span class="current">Lenah Valley, TAS 7008</span>
   </nav>
 
-  <!-- HERO: Overview + StreetLens -->
-  <section class="hero">
-    <div class="overview">
+  <!-- HERO: Wide map banner -->
+  <section class="hero-banner" aria-label="StreetLens preview">
+    <iframe
+      src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d23393.22023721617!2d147.22795873972152!3d-42.869624639113276!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0xaa6e7445d8af2783%3A0x503c94dd0de15b0!2sLenah%20Valley%20TAS%207008!5e0!3m2!1sen!2sau!4v1777177684513!5m2!1sen!2sau"
+      title="Map of Lenah Valley TAS 7008"
+      loading="lazy"
+      allowfullscreen
+      referrerpolicy="no-referrer-when-downgrade"></iframe>
+  </section>
+
+  <!-- ANCHOR NAV (new hierarchy) -->
+  <nav class="anchor-nav" aria-label="Section navigation">
+    <a href="#good-to-know" class="anchor-link active">Good to Know</a>
+    <a href="#rcs" class="anchor-link">RCS Breakdown</a>
+    <a href="#market-trends" class="anchor-link">Market Trends</a>
+    <a href="#area-risks" class="anchor-link">Area Risks</a>
+    <a href="#supply-demand" class="anchor-link">Supply &amp; Demand</a>
+    <a href="#fundamentals" class="anchor-link">Fundamentals</a>
+    <a href="#education" class="anchor-link">Education &amp; Infrastructure</a>
+  </nav>
+
+  <!-- OVERVIEW (full-width card with key metrics + See more expandable) -->
+  <section class="overview" id="overview">
+    <div class="overview-top">
       <div class="location-info">
-        <div class="location-details">
-          <h1 class="suburb-name">Lenah Valley, TAS 7008</h1>
-          <p class="council-meta">Hobart City Council, Tasmania</p>
-        </div>
         <div class="property-tabs-row">
+          <div class="location-details">
+            <h1 class="suburb-name">Lenah Valley, TAS 7008</h1>
+            <p class="council-meta">Hobart City Council, Tasmania</p>
+          </div>
           <div class="property-tabs" role="tablist">
             <button type="button" class="property-tab active" role="tab" aria-selected="true">Houses</button>
             <button type="button" class="property-tab" role="tab" aria-selected="false">Units</button>
           </div>
-          <span class="confidence-badge">
-            <svg viewBox="0 0 11 11" fill="none"><path d="M2 5.5l2.5 2.5L9 3.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            High Confidence
-          </span>
         </div>
+        <span class="confidence-badge">
+          <svg viewBox="0 0 11 11" fill="none"><path d="M2 5.5l2.5 2.5L9 3.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          High Confidence
+        </span>
       </div>
 
       <div class="key-metrics">
@@ -1253,32 +1503,135 @@
       </div>
     </div>
 
-    <aside class="streetlens" aria-label="StreetLens preview">
-      <div class="streetlens-map">
-        <iframe
-          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d23393.22023721617!2d147.22795873972152!3d-42.869624639113276!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0xaa6e7445d8af2783%3A0x503c94dd0de15b0!2sLenah%20Valley%20TAS%207008!5e0!3m2!1sen!2sau!4v1777177684513!5m2!1sen!2sau"
-          title="Map of Lenah Valley TAS 7008"
-          loading="lazy"
-          allowfullscreen
-          referrerpolicy="no-referrer-when-downgrade"></iframe>
-      </div>
-      <div class="streetlens-label">
-        <svg viewBox="0 0 12 12" fill="none"><path d="M6 1a4 4 0 014 4c0 3-4 6-4 6s-4-3-4-6a4 4 0 014-4z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/><circle cx="6" cy="5" r="1.25" fill="currentColor"/></svg>
-        Local insights, nearby listings, points of interest
-      </div>
-    </aside>
-  </section>
+    <button type="button" class="see-more-btn" id="overview-see-more" aria-expanded="false" aria-controls="overview-expanded">
+      <span class="see-more-label">See more</span>
+      <svg class="chev" viewBox="0 0 10 10" fill="none"><path d="M3 2l4 3-4 3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
 
-  <!-- ANCHOR NAV -->
-  <nav class="anchor-nav" aria-label="Section navigation">
-    <a href="#good-to-know" class="anchor-link active">Good to Know</a>
-    <a href="#rcs" class="anchor-link">RCS Breakdown</a>
-    <a href="#quick-stats" class="anchor-link">Quick Area Stats &amp; Risk</a>
-    <a href="#market-trends" class="anchor-link">Market Trends</a>
-    <a href="#supply-demand" class="anchor-link">Supply &amp; Demand</a>
-    <a href="#fundamentals" class="anchor-link">Fundamentals</a>
-    <a href="#education" class="anchor-link">Education &amp; Infrastructure</a>
-  </nav>
+    <div class="overview-expanded" id="overview-expanded">
+      <!-- AREA STATS -->
+      <div class="expanded-section">
+        <div class="expanded-section-title">Area Stats</div>
+        <div class="expanded-stats-grid">
+          <div class="expanded-stat">
+            <span class="expanded-stat-label">Dwellings</span>
+            <span class="expanded-stat-value">3,073</span>
+          </div>
+          <div class="expanded-stat">
+            <span class="expanded-stat-label">Population</span>
+            <span class="expanded-stat-value">6,533</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- BEDROOMS -->
+      <div class="expanded-section">
+        <div class="expanded-section-title">Bedrooms</div>
+        <div class="expanded-bedrooms-grid">
+          <div class="expanded-bedroom">
+            <span class="expanded-bedroom-label">2BR</span>
+            <div class="expanded-bedroom-rows">
+              <div class="expanded-row">
+                <span class="expanded-row-label">Buy</span>
+                <span class="expanded-row-value-wrap">
+                  <span class="expanded-row-value">$465K</span>
+                  <span class="expanded-row-change">+1.6%</span>
+                </span>
+              </div>
+              <div class="expanded-row">
+                <span class="expanded-row-label">Rent</span>
+                <span class="expanded-row-value-wrap">
+                  <span class="expanded-row-value">$520</span>
+                  <span class="expanded-row-change">+3.8%</span>
+                </span>
+              </div>
+              <div class="expanded-row">
+                <span class="expanded-row-label">Yield</span>
+                <span class="expanded-row-value-wrap">
+                  <span class="expanded-row-value">5.8%</span>
+                </span>
+              </div>
+            </div>
+          </div>
+          <div class="expanded-bedroom">
+            <span class="expanded-bedroom-label">3BR</span>
+            <div class="expanded-bedroom-rows">
+              <div class="expanded-row">
+                <span class="expanded-row-label">Buy</span>
+                <span class="expanded-row-value-wrap">
+                  <span class="expanded-row-value">$540K</span>
+                  <span class="expanded-row-change">+2.2%</span>
+                </span>
+              </div>
+              <div class="expanded-row">
+                <span class="expanded-row-label">Rent</span>
+                <span class="expanded-row-value-wrap">
+                  <span class="expanded-row-value">$620</span>
+                  <span class="expanded-row-change">+4.7%</span>
+                </span>
+              </div>
+              <div class="expanded-row">
+                <span class="expanded-row-label">Yield</span>
+                <span class="expanded-row-value-wrap">
+                  <span class="expanded-row-value">5.9%</span>
+                </span>
+              </div>
+            </div>
+          </div>
+          <div class="expanded-bedroom">
+            <span class="expanded-bedroom-label">4BR</span>
+            <div class="expanded-bedroom-rows">
+              <div class="expanded-row">
+                <span class="expanded-row-label">Buy</span>
+                <span class="expanded-row-value-wrap">
+                  <span class="expanded-row-value">$680K</span>
+                  <span class="expanded-row-change">+2.4%</span>
+                </span>
+              </div>
+              <div class="expanded-row">
+                <span class="expanded-row-label">Rent</span>
+                <span class="expanded-row-value-wrap">
+                  <span class="expanded-row-value">$720</span>
+                  <span class="expanded-row-change">+5.1%</span>
+                </span>
+              </div>
+              <div class="expanded-row">
+                <span class="expanded-row-label">Yield</span>
+                <span class="expanded-row-value-wrap">
+                  <span class="expanded-row-value">5.5%</span>
+                </span>
+              </div>
+            </div>
+          </div>
+          <div class="expanded-bedroom">
+            <span class="expanded-bedroom-label">5BR</span>
+            <div class="expanded-bedroom-rows">
+              <div class="expanded-row">
+                <span class="expanded-row-label">Buy</span>
+                <span class="expanded-row-value-wrap">
+                  <span class="expanded-row-value">$820K</span>
+                  <span class="expanded-row-change">+1.9%</span>
+                </span>
+              </div>
+              <div class="expanded-row">
+                <span class="expanded-row-label">Rent</span>
+                <span class="expanded-row-value-wrap">
+                  <span class="expanded-row-value">$850</span>
+                  <span class="expanded-row-change">+4.2%</span>
+                </span>
+              </div>
+              <div class="expanded-row">
+                <span class="expanded-row-label">Yield</span>
+                <span class="expanded-row-value-wrap">
+                  <span class="expanded-row-value">5.4%</span>
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
 
   <!-- ============================================
        GOOD TO KNOW
@@ -1287,19 +1640,17 @@
     <div class="section-body">
       <h2 class="section-title">Good to Know</h2>
       <div class="good-to-know-body">
-        <p><strong>Lenah Valley, TAS 7008</strong> is a tightly-held inner-Hobart house market within the Hobart City Council area, currently positioned as a <strong>long-hold capital growth submarket</strong> in Tasmania's most established residential corridor. Sitting 6&nbsp;km northwest of the Hobart CBD, the suburb is characterised by leafy streets, a blend of heritage and contemporary housing, and an established owner-occupier base.</p>
-        <p>The suburb is home to roughly <strong>6,533 residents</strong> across <strong>3,073 dwellings</strong>, with vacancy at just <strong>0.59%</strong> — one of the tightest rental markets in greater Hobart.</p>
+        <p><strong>Lenah Valley, TAS 7008</strong> is a tightly-held inner-Hobart house market in the Hobart City Council area, currently positioned as a <strong>long-hold capital growth submarket</strong>. Sitting 6&nbsp;km northwest of the CBD, the suburb is home to roughly 6,533 residents across 3,073 dwellings, with vacancy at just 0.59% — one of the tightest rental markets in greater Hobart.</p>
       </div>
-      <a href="#" class="read-more">
-        Read more
-        <svg viewBox="0 0 10 10" fill="none"><path d="M3 2l4 3-4 3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      </a>
+      <p class="explanation" style="background: #f2fef6; border-left: 2px solid var(--green-text); color: var(--text-body);">
+        But, does your suburb meet your investment goals?
+      </p>
     </div>
     <div class="section-footer">
-      <a href="#" class="cta-secondary">
-        Generate PDF
-        <svg viewBox="0 0 14 14" fill="none"><path d="M7 2v8M4 7l3 3 3-3M2 12h10" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      </a>
+      <button type="button" class="read-more" id="gtk-read-more" aria-haspopup="dialog" aria-controls="gtk-modal" style="background: none; border: 0; padding: 5px 0; cursor: pointer;">
+        Read more
+        <svg viewBox="0 0 10 10" fill="none"><path d="M3 2l4 3-4 3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
     </div>
   </section>
 
@@ -1355,59 +1706,6 @@
       <span class="footer-info">
         <svg viewBox="0 0 12 12" fill="none"><rect x="3" y="5.5" width="6" height="5" rx="1" stroke="currentColor" stroke-width="1.2"/><path d="M4.5 5.5V4a1.5 1.5 0 013 0v1.5" stroke="currentColor" stroke-width="1.2"/></svg>
         Unlock the 3 RCS dimensions
-      </span>
-      <div class="footer-actions">
-        <span class="plan-label">
-          Included in
-          <span class="plan-pills">
-            <span class="plan-pill investor" tabindex="0">Investor</span>
-            <span class="plan-pill pro" tabindex="0">Pro</span>
-          </span>
-        </span>
-        <a href="#" class="cta-primary">
-          Get full access
-          <svg viewBox="0 0 11 11" fill="none"><path d="M2 5.5h7M6 2.5l3 3-3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </a>
-      </div>
-    </div>
-  </section>
-
-  <!-- ============================================
-       QUICK AREA STATS & RISK
-       ============================================ -->
-  <section id="quick-stats" class="section tier-stable">
-    <div class="section-body">
-      <h2 class="section-title">Quick Area Stats &amp; Risk</h2>
-      <div class="stats-row">
-        <div class="stat-item">
-          <span class="stat-icon">
-            <svg viewBox="0 0 16 16" fill="none"><path d="M2 8l6-5 6 5v6H2V8z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/><path d="M6 14v-4h4v4" stroke="currentColor" stroke-width="1.4"/></svg>
-          </span>
-          <div class="stat-content">
-            <span class="stat-value">3,073</span>
-            <span class="stat-label">Dwellings</span>
-          </div>
-        </div>
-        <div class="stat-item">
-          <span class="stat-icon">
-            <svg viewBox="0 0 16 16" fill="none"><circle cx="5.5" cy="5" r="2.2" stroke="currentColor" stroke-width="1.4"/><circle cx="11" cy="6" r="1.8" stroke="currentColor" stroke-width="1.4"/><path d="M1.5 13c.5-2.2 2.2-3.2 4-3.2s3.5 1 4 3.2M9 13c.4-1.6 1.6-2.4 3-2.4s2.6.8 3 2.4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
-          </span>
-          <div class="stat-content">
-            <span class="stat-value">6,533</span>
-            <span class="stat-label">Population</span>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="section-footer">
-      <span class="footer-info">
-        <svg viewBox="0 0 12 12" fill="none"><rect x="3" y="5.5" width="6" height="5" rx="1" stroke="currentColor" stroke-width="1.2"/><path d="M4.5 5.5V4a1.5 1.5 0 013 0v1.5" stroke="currentColor" stroke-width="1.2"/></svg>
-        3 more risk signals locked for Lenah Valley
-        <span class="footer-teasers">
-          <span class="risk-chip" data-metric="edi-risk">EDI Risk</span>
-          <span class="risk-chip" data-metric="bushfire">Bushfire</span>
-          <span class="risk-chip" data-metric="flood">Flood</span>
-        </span>
       </span>
       <div class="footer-actions">
         <span class="plan-label">
@@ -1547,7 +1845,7 @@
             </div>
           </div>
           <div class="q-card-preview">
-            <img src="photo/Market Trends 1.png" alt="Market trends cycle preview" loading="lazy">
+            <img class="q-illus" src="svgs/Market Trends.svg" alt="" aria-hidden="true">
           </div>
         </div>
       </div>
@@ -1556,6 +1854,64 @@
       <span class="footer-info">
         <svg viewBox="0 0 12 12" fill="none"><rect x="3" y="5.5" width="6" height="5" rx="1" stroke="currentColor" stroke-width="1.2"/><path d="M4.5 5.5V4a1.5 1.5 0 013 0v1.5" stroke="currentColor" stroke-width="1.2"/></svg>
         Unlock 10-year trends + cycle &amp; yield outlook
+      </span>
+      <div class="footer-actions">
+        <span class="plan-label">
+          Included in
+          <span class="plan-pills">
+            <span class="plan-pill investor" tabindex="0">Investor</span>
+            <span class="plan-pill pro" tabindex="0">Pro</span>
+          </span>
+        </span>
+        <a href="#" class="cta-primary">
+          Get full access
+          <svg viewBox="0 0 11 11" fill="none"><path d="M2 5.5h7M6 2.5l3 3-3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================
+       AREA RISKS
+       ============================================ -->
+  <section id="area-risks" class="section tier-stable">
+    <div class="section-body">
+      <div class="section-header">
+        <h2 class="section-title">Area Risks</h2>
+      </div>
+      <p class="explanation" style="background: var(--tier-stable-tint); border-left: 2px solid var(--green-text); color: var(--text-body);">
+        Property data alone won't flag the structural risks that can erode a long-hold position. <strong>Bushfire overlays, flood-zone exposure, and economic concentration</strong> sit outside the price feed but determine whether your capital is insurable, defensible, and structurally protected. <span class="accent" style="color: var(--green-text); font-weight: 600;">Unlock to see.</span>
+      </p>
+      <div class="card-stack">
+        <div class="q-card">
+          <div class="q-card-header">
+            <h3 class="q-card-title">Are there hidden structural risks shaping Lenah Valley's long-hold story?</h3>
+            <button type="button" class="q-card-info" aria-label="About this insight"
+                    data-tooltip="Locked preview — unlock the EDI economic-diversification index, bushfire overlay rating, and flood-zone exposure for Lenah Valley."
+                    data-tooltip-align="right">
+              <svg viewBox="0 0 12 12" fill="none"><path d="M6 10.5v-3.5M6 4.25a.5.5 0 100-.01" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><circle cx="6" cy="6" r="5" stroke="currentColor" stroke-width="1.2"/></svg>
+            </button>
+          </div>
+          <div class="q-card-body">
+            <div class="q-card-content">
+              <p class="q-card-text">Lenah Valley's western fringe sits inside greater Hobart's bushfire-overlay zone, while the suburb's employment pull leans on a narrow set of health and education sectors — concentration the EDI score quantifies. Combined with flood-zone exposure, these three signals separate insurable, defensible long-holds from those carrying tail-risk that doesn't show up in the headline price.</p>
+              <div class="risk-chips">
+                <span class="risk-chip" data-metric="edi-risk">EDI Risk</span>
+                <span class="risk-chip" data-metric="bushfire">Bushfire</span>
+                <span class="risk-chip" data-metric="flood">Flood</span>
+              </div>
+            </div>
+            <div class="q-card-preview">
+              <img class="q-illus" src="svgs/Area Risks.svg" alt="" aria-hidden="true">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="section-footer">
+      <span class="footer-info">
+        <svg viewBox="0 0 12 12" fill="none"><rect x="3" y="5.5" width="6" height="5" rx="1" stroke="currentColor" stroke-width="1.2"/><path d="M4.5 5.5V4a1.5 1.5 0 013 0v1.5" stroke="currentColor" stroke-width="1.2"/></svg>
+        3 more risk signals locked for Lenah Valley
       </span>
       <div class="footer-actions">
         <span class="plan-label">
@@ -1607,7 +1963,7 @@
               </div>
             </div>
             <div class="q-card-preview">
-              <img src="photo/Supply &amp; Demand 1.png" alt="Supply trend preview" loading="lazy">
+              <img class="q-illus" src="svgs/Supply & Demand 1.svg" alt="" aria-hidden="true">
             </div>
           </div>
         </div>
@@ -1632,7 +1988,7 @@
               </div>
             </div>
             <div class="q-card-preview">
-              <img src="photo/Supply &amp; Demand 2.png" alt="Demand trend preview" loading="lazy">
+              <img class="q-illus" src="svgs/Supply & Demand 2.svg" alt="" aria-hidden="true">
             </div>
           </div>
         </div>
@@ -1693,7 +2049,7 @@
               </div>
             </div>
             <div class="q-card-preview">
-              <img src="photo/Fundamentals 01.png" alt="Fundamentals: socio-economics preview" loading="lazy">
+              <img class="q-illus" src="svgs/Fundamentals 1.svg" alt="" aria-hidden="true">
             </div>
           </div>
         </div>
@@ -1716,7 +2072,7 @@
               </div>
             </div>
             <div class="q-card-preview">
-              <img src="photo/Fundamentals 02.png" alt="Fundamentals: projections preview" loading="lazy">
+              <img class="q-illus" src="svgs/Fundamentals 2.svg" alt="" aria-hidden="true">
             </div>
           </div>
         </div>
@@ -1741,7 +2097,7 @@
               </div>
             </div>
             <div class="q-card-preview">
-              <img src="photo/Fundamentals 03.png" alt="Fundamentals: liquidity preview" loading="lazy">
+              <img class="q-illus" src="svgs/Fundamentals 3.svg" alt="" aria-hidden="true">
             </div>
           </div>
         </div>
@@ -1801,7 +2157,7 @@
             </div>
           </div>
           <div class="q-card-preview">
-            <img src="photo/Education &amp; Infrastructure 1.png" alt="Education and infrastructure preview" loading="lazy">
+            <img class="q-illus" src="svgs/Education & Infrastructure.svg" alt="" aria-hidden="true">
           </div>
         </div>
       </div>
@@ -1864,6 +2220,40 @@
   <div class="metric-popover__hook" data-pop-hook></div>
 </div>
 
+<!-- ===== Good to Know popup modal ===== -->
+<div class="modal-overlay" id="gtk-modal-overlay" aria-hidden="true">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="gtk-modal-title" id="gtk-modal">
+    <div class="modal-header">
+      <h2 id="gtk-modal-title" class="modal-title">Good to Know</h2>
+      <button type="button" class="modal-close" id="gtk-modal-close" aria-label="Close">
+        <svg viewBox="0 0 16 16" fill="none"><path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <p><strong>Lenah Valley, TAS 7008</strong> is a tightly-held inner-Hobart house market in the Hobart City Council area, currently positioned as a <strong>long-hold capital growth submarket.</strong> Sitting 6&nbsp;km northwest of the CBD, the suburb is home to roughly 6,533 residents across 3,073 dwellings, with vacancy at just 0.59% — one of the tightest rental markets in greater Hobart.</p>
+
+      <h3>What the market data is signalling</h3>
+      <p>According to <strong>HtAG Analytics</strong>, Lenah Valley is exhibiting classic supply-constrained behaviour. Stock on Market sits at <strong>0.36%</strong> and Inventory at <strong>1.45 months</strong> — both well below balanced-market thresholds — driving <strong>+2.1% YoY price growth and +4.5% YoY rent growth</strong>. The <a href="https://www.htag.com.au/lga-suburb-heatmap/" target="_blank" rel="noopener">GeoDex heatmap</a> shows how this ranks against every other Hobart suburb.</p>
+
+      <h3>Who lives here — and why it matters</h3>
+      <p>The IRSAD index of 1047 places Lenah Valley above the Tasmanian median — an affluent, professional population that correlates with <strong>lower volatility and stronger long-cycle growth</strong>, a relationship documented in HtAG's <a href="https://www.htag.com.au/irsad-crossover-effect-property-growth/" target="_blank" rel="noopener">IRSAD crossover study</a>. Owner-occupier dominance further supports price stability: tightly-held suburbs see less forced selling in downturns.</p>
+
+      <h3>Lenah Valley vs the wider Hobart market</h3>
+      <p>Lenah Valley sits in the inner-northwest belt alongside Mount Stuart, West Hobart, and North Hobart — blue-chip submarkets sharing leafy character and limited new supply. At a typical <strong>$551K</strong>, Lenah Valley is more accessible than several of its neighbours with comparable fundamentals. HtAG's <a href="#" target="_blank" rel="noopener">LGA vs Suburb framework</a> is the cleanest way to compare them.</p>
+
+      <h3>What's behind the RCS™ score of 79</h3>
+      <p>The headline RCS™ of 79 is strong but composite — it bundles risk-minimisation, capital growth, and cashflow into a single score. The three sub-scores in the RCS Breakdown section reveal which dimension is doing the heavy lifting, and which portfolio brief the suburb actually fits.</p>
+    </div>
+    <div class="modal-footer">
+      <p class="modal-callout">But, does your suburb meet your investment goals?</p>
+      <a href="#" class="cta-primary">
+        Get full access
+        <svg viewBox="0 0 11 11" fill="none"><path d="M2 5.5h7M6 2.5l3 3-3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
+    </div>
+  </div>
+</div>
+
 </main>
 
 <script>
@@ -1882,7 +2272,7 @@
   });
 
   // Anchor nav active-state on scroll
-  const sections = ['good-to-know','rcs','quick-stats','market-trends','supply-demand','fundamentals','education']
+  const sections = ['good-to-know','rcs','market-trends','area-risks','supply-demand','fundamentals','education']
     .map(id => document.getElementById(id))
     .filter(Boolean);
   const anchorLinks = document.querySelectorAll('.anchor-link');
@@ -1897,6 +2287,52 @@
     });
   }, { rootMargin: '-40% 0px -50% 0px' });
   sections.forEach(s => observer.observe(s));
+
+  // ====================================================================
+  // Overview "See more" toggle — expands the historical-performance grid
+  // ====================================================================
+  (function initSeeMore() {
+    const btn = document.getElementById('overview-see-more');
+    const panel = document.getElementById('overview-expanded');
+    if (!btn || !panel) return;
+    const label = btn.querySelector('.see-more-label');
+    btn.addEventListener('click', () => {
+      const isOpen = panel.classList.toggle('is-open');
+      btn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+      if (label) label.textContent = isOpen ? 'See less' : 'See more';
+    });
+  })();
+
+  // ====================================================================
+  // Good to Know popup modal — opens from the "Read more" footer link
+  // ====================================================================
+  (function initGtkModal() {
+    const trigger = document.getElementById('gtk-read-more');
+    const overlay = document.getElementById('gtk-modal-overlay');
+    const closeBtn = document.getElementById('gtk-modal-close');
+    if (!trigger || !overlay || !closeBtn) return;
+
+    function open() {
+      overlay.classList.add('is-open');
+      overlay.setAttribute('aria-hidden', 'false');
+      document.body.classList.add('modal-open');
+      // Move focus into the dialog for accessibility
+      setTimeout(() => closeBtn.focus(), 50);
+    }
+    function close() {
+      overlay.classList.remove('is-open');
+      overlay.setAttribute('aria-hidden', 'true');
+      document.body.classList.remove('modal-open');
+      trigger.focus();
+    }
+
+    trigger.addEventListener('click', (e) => { e.preventDefault(); open(); });
+    closeBtn.addEventListener('click', close);
+    overlay.addEventListener('click', (e) => { if (e.target === overlay) close(); });
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && overlay.classList.contains('is-open')) close();
+    });
+  })();
 
   // ====================================================================
   // Locked-metric popover (Mat feedback)
